@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Outer Circle -->
+  <circle cx="50" cy="50" r="48" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+
+  <!-- Admin Icon (Head and Shoulders) -->
+  <circle cx="50" cy="35" r="10" fill="#FFF"/> <!-- Head -->
+  <path d="M40 55c0-5.5 4.5-10 10-10s10 4.5 10 10v15H40V55z" fill="#FFF"/> <!-- Shoulders -->
+
+  <!-- Panel Icon (Rectangle with Lines) -->
+  <rect x="30" y="60" width="40" height="25" fill="#FFF" rx="2"/>
+  <line x1="35" y1="65" x2="65" y2="65" stroke="#4CAF50" stroke-width="2"/>
+  <line x1="35" y1="70" x2="65" y2="70" stroke="#4CAF50" stroke-width="2"/>
+  <line x1="35" y1="75" x2="50" y2="75" stroke="#4CAF50" stroke-width="2"/>
+</svg>
