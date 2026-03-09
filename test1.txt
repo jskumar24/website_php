@@ -1,0 +1,41 @@
+Please Create sitting pages: please prepare best html page to entry sitting data
+
+table: tbl_abhyasis_sitting
+Field               | Type         | Null | Key | Default           | Extra             |
++---------------------+--------------+------+-----+-------------------+-------------------+
+| id                  | int          | NO   | PRI | NULL              | auto_increment    |
+| abhyasi_id          | int          | NO   | MUL | NULL              |                   |
+| sitting_attend_date | date         | NO   |     | NULL              |                   |
+| preceptor_name      | varchar(150) | YES  |     | NULL              |                   |
+| created_at          | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED 
+
+1. CENTER - load all centers data into dropdown
+2. PRACTICING - load "All Abhyasis", Regular Practicing (Yes), Irregular Practicing (No)
+3. Sitting Date: user select any date from date field from the table column of sitting date and it should be add in the sitting date column only for selected checkbox checked. 
+display columns in the table.
+#	Abhyasi Name |	SRCM ID |	Mobile	| Center Name | Sub-Center | Sitting Date 
+
+
+1. sunday satsang not satsang 
+2. sitting not taken within date range
+3. preceptor sitting count
+4. missing details in srcm id, mobile no, email id
+5. birth of year in the abhyasis 
+6. report by Ages of abhyasis
+7. report by professional
+8. abhyasis reports - need to be add column of professional
+9. event form - start event date and end event date
+10. all center abhyasis report
+11. add first name , last name, age, gender and professional - abhyasis reports
+
+
+Please export into the following reports into pdf
+1. reports from the index.html - Satsang Attendance, TS-12 Zone Status Summary, Individual Sitting, Zone Activities, Preceptor Sittings
+2. sunday satsang count report of each center - from the day 1 of current to till current date: coulnms of center name, month name, attend count
+3. sitting count report of each center, under center of each preceptor sitting count and each month - from the day 1 of current to till current date: coulnms of center name, preceptor namme, month name, sitting count
+4. Event count report of each district, and each month - from the day 1 of current to till current date: coulnms of event name, event date, location, Registered member, attendent Abhyasis
+
+
+mysqldump -u root -p root123 > mydb_backup.sql
+
+

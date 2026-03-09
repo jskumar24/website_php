@@ -1,0 +1,212 @@
+/* ================================================================
+   TS-12 Attendance System — Mobile Responsive CSS  v2
+   Targets: Star Admin2 template + custom TS12 components
+   ================================================================ */
+
+/* ── 1. Hard reset for horizontal overflow ───────────────────── */
+html, body { overflow-x: hidden; max-width: 100vw; }
+*, *::before, *::after { box-sizing: border-box; }
+img, svg, canvas, iframe { max-width: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* ── 2. Page wrapper — never wider than screen ───────────────── */
+.container-scroller,
+.container-fluid,
+.page-body-wrapper { max-width: 100vw; overflow-x: hidden; }
+
+/* ── 3. NAVBAR ───────────────────────────────────────────────── */
+@media (max-width: 991px) {
+  .navbar.default-layout { height: 60px; min-height: 60px; }
+  .navbar-brand-wrapper { width: 70px !important; min-width: 70px; }
+  .navbar-brand-wrapper .brand-logo { display: none !important; }
+  .navbar-brand-wrapper .brand-logo-mini { display: inline-block !important; }
+  .navbar-menu-wrapper { width: calc(100vw - 70px) !important; padding-right: 0.5rem; }
+  .navbar-nav .nav-item.d-none.d-lg-block { display: none !important; }
+  .navbar-toggler.navbar-toggler-right {
+    display: flex !important; align-items: center;
+    margin-left: auto; padding: 8px 10px; border: none;
+    background: transparent; font-size: 1.4rem; color: #4B49AC; cursor: pointer;
+  }
+  .navbar-toggler:not(.navbar-toggler-right) { display: none !important; }
+  .page-body-wrapper { padding-top: 60px !important; }
+}
+
+/* ── 4. SIDEBAR DRAWER ───────────────────────────────────────── */
+@media (max-width: 991px) {
+  .sidebar.sidebar-offcanvas {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important; bottom: 0 !important;
+    width: 260px !important; height: 100vh !important;
+    z-index: 1100 !important;
+    transform: translateX(-260px) !important;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 4px 0 20px rgba(0,0,0,.18);
+  }
+  .sidebar.sidebar-offcanvas.ts12-open {
+    transform: translateX(0) !important;
+  }
+  .main-panel {
+    width: 100% !important;
+    min-height: calc(100vh - 60px);
+    margin-left: 0 !important;
+  }
+  body.ts12-sidebar-open::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1090;
+  }
+}
+
+/* ── 5. Content wrapper ──────────────────────────────────────── */
+@media (max-width: 767px) {
+  .content-wrapper { padding: 1rem 0.65rem !important; }
+}
+
+/* ── 6. Bootstrap grid ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  [class*="col-lg-"], [class*="col-md-"] {
+    width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important;
+  }
+}
+
+/* ── 7. TABLES ───────────────────────────────────────────────── */
+.table-responsive {
+  width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.table-responsive > table { min-width: 540px; }
+@media (max-width: 767px) {
+  .table th, .table td { padding: 0.4rem 0.55rem; font-size: 0.78rem; white-space: nowrap; }
+  .table .btn, .table .btn-sm { padding: 2px 7px; font-size: 0.7rem; }
+}
+
+/* ── 8. CARDS ────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .card { margin-bottom: 0.85rem; border-radius: 10px; }
+  .card-body { padding: 0.9rem 0.75rem; }
+  .card-title { font-size: 0.9rem !important; }
+}
+
+/* ── 9. FORMS — prevent iOS auto-zoom (needs ≥16px) ─────────── */
+@media (max-width: 767px) {
+  input, textarea, select, .form-control, .form-select { font-size: 16px !important; }
+  .form-label { font-size: 0.73rem; }
+  .input-group[style*="max-width"] { max-width: 100% !important; width: 100% !important; }
+}
+
+/* ── 10. TOOLBAR ─────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .d-flex.justify-content-between.align-items-center.mb-3.flex-wrap,
+  .d-flex.align-items-center.justify-content-between.mb-3.flex-wrap {
+    flex-direction: column !important; align-items: stretch !important; gap: 0.5rem;
+  }
+}
+
+/* ── 11. FILTER BAR ──────────────────────────────────────────── */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: flex-end; }
+@media (max-width: 767px) {
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-bar > div { min-width: unset !important; width: 100% !important; }
+  .filter-bar .btn { width: 100%; }
+  #centerFilterWrap, #preceptorFilterWrap, #districtFilterWrap,
+  #ageFilterWrap, #professionalFilterWrap, #abhyasiFilterWrap,
+  #regularFilterWrap, #evtAbhyasiFilterWrap, #evtAbhyasiPickWrap {
+    min-width: unset !important; width: 100% !important;
+  }
+}
+
+/* ── 12. MODALS ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .modal-dialog { margin: 0.4rem auto; max-width: calc(100vw - 0.8rem) !important; }
+  .modal-content { border-radius: 14px; }
+  .modal-body { padding: 0.9rem 0.85rem; }
+  .modal-header { padding: 0.85rem; }
+  .modal-footer { padding: 0.65rem 0.85rem; flex-wrap: wrap; gap: 0.4rem; }
+  .modal-footer .btn { flex: 1 1 auto; min-width: 80px; }
+  .modal-body .col-md-4, .modal-body .col-md-6,
+  .modal-body .col-md-3, .modal-body .col-md-8 {
+    width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important;
+  }
+}
+
+/* ── 13. DASHBOARD CHARTS ────────────────────────────────────── */
+@media (max-width: 767px) {
+  canvas { max-height: 200px !important; }
+  [style*="min-width:200px"] { min-width: 0 !important; width: 100% !important; }
+  #dashRow1, #dashRow2, #dashRow3 { row-gap: 0 !important; }
+  .status-summary-chart-wrapper { height: 64px !important; }
+  #preceptorSittingList { max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* ── 14. EXPORT DROPDOWN ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .btn-wrapper { display: flex !important; flex-wrap: wrap; gap: 0.4rem; }
+  .btn-wrapper .btn { flex: 1 1 auto; font-size: 0.78rem; }
+  .dropdown-menu { min-width: 0 !important; width: calc(100vw - 1rem) !important; }
+}
+
+/* ── 15. REPORT CARDS ────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .report-grid { grid-template-columns: 1fr 1fr !important; gap: 0.55rem !important; }
+  .report-card { padding: 0.7rem 0.65rem !important; border-radius: 10px !important; }
+  .rc-icon { width: 32px !important; height: 32px !important; font-size: 0.9rem !important; }
+  .report-card .rc-title { font-size: 0.75rem !important; }
+  .report-card .rc-sub { display: none !important; }
+}
+@media (max-width: 400px) { .report-grid { grid-template-columns: 1fr !important; } }
+
+/* ── 16. SITTING / ATTENDANCE TABLE ──────────────────────────── */
+@media (max-width: 767px) {
+  .preceptor-sel { min-width: 120px !important; font-size: 0.78rem !important; }
+  .inline-date.date-sel { min-width: 120px !important; }
+}
+
+/* ── 17. SEARCHABLE DROPDOWN — bottom sheet on mobile ────────── */
+@media (max-width: 767px) {
+  .sd-wrap { position: static !important; }
+  .sd-panel {
+    position: fixed !important;
+    left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important;
+    width: 100% !important; max-width: 100% !important;
+    border-radius: 18px 18px 0 0 !important;
+    box-shadow: 0 -6px 32px rgba(0,0,0,.2) !important;
+    z-index: 2100 !important;
+    max-height: 60vh;
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .sd-wrap.open .sd-panel { display: flex !important; }
+  .sd-list { flex: 1; overflow-y: auto !important; -webkit-overflow-scrolling: touch; max-height: none !important; }
+  .sd-search-box { padding: 12px 14px 8px; flex-shrink: 0; }
+  .sd-search-box input { font-size: 16px !important; padding: 9px 12px; }
+  .sd-option { padding: 11px 16px; font-size: 0.88rem; min-height: 44px; display: flex; align-items: center; }
+  .sd-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2099; display: none; }
+  .sd-backdrop.visible { display: block; }
+}
+
+/* ── 18. FOOTER ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .footer { text-align: center !important; font-size: 0.7rem !important; padding: 0.6rem !important; }
+  .footer .d-sm-flex { flex-direction: column !important; align-items: center !important; gap: 0.2rem; }
+}
+
+/* ── 19. LOGIN ───────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .page { padding: 0.75rem; }
+  .c-body { padding: 1.3rem 1rem 1.2rem; }
+  .c-header { padding: 1.3rem 1rem 1.1rem; }
+}
+
+/* ── 20. TOUCH TARGETS ───────────────────────────────────────── */
+@media (max-width: 991px) {
+  .btn, .dropdown-item, .nav-link { min-height: 38px; }
+  .form-check-input { width: 1.15em !important; height: 1.15em !important; }
+}
+
+/* ── 21. SAFE AREA (iPhone notch) ────────────────────────────── */
+@supports (padding: env(safe-area-inset-top)) {
+  .navbar.fixed-top { padding-top: max(0px, env(safe-area-inset-top)); }
+  .sidebar.sidebar-offcanvas { padding-top: max(0px, env(safe-area-inset-top)) !important; }
+  .sd-panel { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important; }
+}

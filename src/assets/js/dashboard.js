@@ -282,7 +282,7 @@
       });
     }
 
-    if ($('#totalVisitors').length) {
+    if (false && $('#totalVisitors').length) { /* replaced by summary JS */
       var bar = new ProgressBar.Circle(totalVisitors, {
         color: '#fff',
         // This has to be the same size as the maximum width to
@@ -321,7 +321,7 @@
       bar.animate(.64); // Number from 0.0 to 1.0
     }
 
-    if ($('#visitperday').length) {
+    if (false && $('#visitperday').length) { /* replaced by summary JS */
       var bar = new ProgressBar.Circle(visitperday, {
         color: '#fff',
         // This has to be the same size as the maximum width to
@@ -360,7 +360,7 @@
       bar.animate(.34); // Number from 0.0 to 1.0
     }
 
-    if ($("#doughnutChart").length) { 
+    if (false && $("#doughnutChart").length) { /* replaced by activitiesDonut */
       const doughnutChartCanvas = document.getElementById('doughnutChart');
       new Chart(doughnutChartCanvas, {
         type: 'doughnut',

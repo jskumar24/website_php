@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Star Admin2 </title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../assets/vendors/feather/feather.css">
+  <link rel="stylesheet" href="../../assets/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/typicons/typicons.css">
+  <link rel="stylesheet" href="../../assets/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../assets/images/favicon.png" />
+  <style>
+    select.form-select,
+    select.form-select option,
+    select.form-control,
+    select.form-control option {
+      color: #000 !important;
+    }
+
+    #attendanceTable thead th {
+      background: #4B49AC;
+      color: #fff;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    #attendanceTable tbody tr:hover {
+      background: #f0f0ff;
+    }
+
+    .attend-select {
+      min-width: 70px;
+      font-weight: 600;
+    }
+
+    .attend-select.present {
+      color: #198754 !important;
+      background: #d1e7dd;
+      border-color: #a3cfbb;
+    }
+
+    .attend-select.absent {
+      color: #dc3545 !important;
+      background: #f8d7da;
+      border-color: #f1aeb5;
+    }
+
+    .attend-select.unmarked {
+      color: #6c757d !important;
+    }
+
+    .filter-card {
+      background: #f8f9ff;
+      border: 1px solid #e0e0f5;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .sunday-badge {
+      background: #4B49AC;
+      color: #fff;
+      font-size: .7rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+  
+    /* ── Searchable Dropdown ─────────────────────────────────────── */
+    .sd-wrap { position: relative; }
+    .sd-input-row {
+      display: flex; align-items: center;
+      border: 1.5px solid #dee2e6; border-radius: 6px;
+      background: #fff; cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .sd-input-row:focus-within {
+      border-color: #4B49AC;
+      box-shadow: 0 0 0 3px rgba(75,73,172,.12);
+    }
+    .sd-display {
+      flex: 1; padding: 5px 10px; font-size: .875rem;
+      color: #212529; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; cursor: pointer; user-select: none;
+      min-height: 31px; display: flex; align-items: center;
+    }
+    .sd-display.placeholder { color: #6c757d; }
+    .sd-chevron { padding: 0 9px; color: #6c757d; font-size: .7rem; pointer-events: none; transition: transform .2s; }
+    .sd-wrap.open .sd-chevron { transform: rotate(180deg); }
+    .sd-panel {
+      display: none; position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 360px;
+      background: #fff; border: 1px solid #dee2e6;
+      border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.12);
+      z-index: 1060; overflow: hidden;
+    }
+    .sd-wrap.open .sd-panel { display: block; }
+    .sd-search-box { padding: 8px 10px 6px; border-bottom: 1px solid #f0f0f0; }
+    .sd-search-box input {
+      width: 100%; border: 1px solid #dee2e6; border-radius: 6px;
+      padding: 5px 10px; font-size: .82rem; outline: none;
+    }
+    .sd-search-box input:focus { border-color: #4B49AC; }
+    .sd-list { max-height: 240px; overflow-y: auto; }
+    .sd-list::-webkit-scrollbar { width: 5px; }
+    .sd-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    .sd-option { padding: 7px 14px; font-size: .855rem; cursor: pointer; color: #212529; transition: background .1s; }
+    .sd-option:hover, .sd-option.focused { background: #eeeef9; color: #4B49AC; }
+    .sd-option.selected { font-weight: 600; color: #4B49AC; background: #eeeeff; }
+    .sd-option.hidden { display: none; }
+    .sd-no-results { padding: 10px 14px; font-size: .82rem; color: #999; text-align: center; }
+    /* Inline preceptor datalist input */
+    .preceptor-sel {
+      width: 100%; border: 1.5px solid #dee2e6; border-radius: 6px;
+      padding: 4px 8px; font-size: .82rem; outline: none;
+      color: #212529; background: #fff;
+    }
+    .preceptor-sel:focus { border-color: #4B49AC; box-shadow: 0 0 0 3px rgba(75,73,172,.1); }
+    .preceptor-sel::placeholder { color: #aaa; font-size: .78rem; }
+
+  </style>
+  <link rel="stylesheet" href="../../assets/css/ts12-mobile.css">
+</head>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    /* ── fetchJSON: always shows real server/PHP errors ──────────────── */
+    async function fetchJSON(url, opts = {}) {
+      const res = await fetch(url, opts);
+      const contentType = res.headers.get('content-type') || '';
+      let body;
+      if (contentType.includes('application/json')) {
+        body = await res.json();
+      } else {
+        const text = await res.text();
+        // PHP returned HTML (e.g. fatal error) — extract useful part
+        const match = text.match(/<b>(?:Fatal error|Parse error|Warning)[^<]*/i);
+        throw new Error(match ? match[0].replace(/<[^>]+>/g,'') : `HTTP ${res.status}: Server returned non-JSON response`);
+      }
+      if (!res.ok) throw new Error(body.error || body.message || `HTTP ${res.status}`);
+      return body;
+    }
+
+
+    const BASE = "../backend";
+    const tableWrap = document.getElementById("tableWrap");
+    const tableBody = document.getElementById("attendanceBody");
+    const errorEl = document.getElementById("errorEl");
+    const loader = document.getElementById("loader");
+    const saveBtn = document.getElementById("saveBtn");
+    const noData = document.getElementById("noData");
+    const rowCount = document.getElementById("rowCount");
+    const sundayBadges = document.getElementById("sundayBadges");
+    const selectAllChk = document.getElementById("selectAllChk");
+
+    let currentDate = "";
+    let currentCenter = "";
+    let allAbhyasis = [];   // full list cached for client-side filter
+
+    /* ── Populate Centers ─────────────────────────────────────────── */
+    async function loadCenters() {
+      try {
+        const data = await fetchJSON(`${BASE}/centers_api.php`);
+        sdPopulate('centerSel', data.map(c => ({ value: c.center_id, label: c.center_name })), '— Select Center —');
+      } catch (e) { showError('❌ ' + e.message); }
+    }
+
+    /* ── Populate Months ──────────────────────────────────────────── */
+    function loadMonths() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const months = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+      const opts = months.map((m, i) => ({
+        value: `${year}-${String(i + 1).padStart(2, "0")}`,
+        label: `${m} ${year}`
+      }));
+      sdPopulate('monthSel', opts, '— Select Month —');
+      // Auto-select current month
+      const curVal = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      const curLabel = `${months[now.getMonth()]} ${year}`;
+      // Trigger via sdSelect by clicking the matching option
+      const list = document.getElementById('sdList_monthSel');
+      if (list) {
+        const match = Array.from(list.querySelectorAll('.sd-option')).find(el => el.dataset.value === curVal);
+        if (match) match.click();
+      }
+    }
+
+    /* ── Get Sundays in YYYY-MM ───────────────────────────────────── */
+    function getSundays(yearMonth) {
+      const [year, month] = yearMonth.split("-").map(Number);
+      const sundays = [];
+      const d = new Date(year, month - 1, 1);
+      while (d.getMonth() === month - 1) {
+        if (d.getDay() === 0) sundays.push(new Date(d));
+        d.setDate(d.getDate() + 1);
+      }
+      return sundays;
+    }
+
+    function fmtDate(d) { return d.toISOString().split("T")[0]; }
+    function fmtDisplay(str) {
+      const d = new Date(str + "T00:00:00");
+      return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+    }
+
+    function renderSundayBadges(sundays) {
+      sundayBadges.innerHTML = sundays.map(s =>
+        `<span class="sunday-badge">${fmtDisplay(fmtDate(s))}</span>`
+      ).join("");
+    }
+
+    /* ── Render table rows from cached data ───────────────────────── */
+    function renderRows(data) {
+      const dateSel = document.getElementById("dateSel").value;
+      if (!data.length) {
+        tableBody.innerHTML = "";
+        tableWrap.style.display = "none";
+        noData.style.display = "block";
+        rowCount.textContent = "";
+        saveBtn.disabled = true;
+        return;
+      }
+      noData.style.display = "none";
+      tableBody.innerHTML = data.map((r, idx) => {
+        const isP = r.is_attend === 1;
+        const isA = r.is_attend === 0;
+        const isUnmarked = r.is_attend === null || r.is_attend === undefined;
+        const selClass = isP ? "present" : isA ? "absent" : "unmarked";
+        const pSel = isP ? "selected" : "";
+        const aSel = isA ? "selected" : "";
+        const dateLabel = dateSel ? fmtDisplay(dateSel) : "—";
+        return `<tr>
+          <td class="text-center">
+            <input type="checkbox" class="row-chk form-check-input" style="cursor:pointer;">
+          </td>
+          <td class="text-center text-muted small">${idx + 1}</td>
+          <td>${(r.abhyasi_name || "").trim() || (r.first_name || "") + " " + (r.last_name || "")}</td>
+          <td>${r.srcm_id || ""}</td>
+          <td>${r.mobile_no || ""}</td>
+          <td>${r.center_name || ""}</td>
+          <td>${r.subcenter_name || ""}</td>
+          <td class="text-center fw-semibold">${dateLabel}</td>
+          <td class="text-center">
+            <input type="hidden" name="abhyasi_id" value="${r.abhyasi_id}">
+            <select class="form-select form-select-sm attend-select ${selClass}"
+                    onchange="updateAttendStyle(this)">
+              <option value="" ${isUnmarked ? "selected" : ""}>—</option>
+              <option value="P" ${pSel}>P</option>
+              <option value="A" ${aSel}>A</option>
+            </select>
+          </td>
+        </tr>`;
+      }).join("");
+      tableWrap.style.display = "block";
+      rowCount.textContent = `${data.length} abhyasi(s)`;
+      saveBtn.disabled = !document.getElementById("dateSel").value;
+      selectAllChk.checked = false;
+    }
+
+    /* ── Load abhyasis for selected center (cached) ───────────────── */
+    async function loadAbhyasis() {
+      const centerId = document.getElementById("centerSel").value;
+      const regularVal = document.getElementById("regularSel").value;
+      if (!centerId) return;
+
+      currentCenter = centerId;
+      loader.style.display = "block";
+      tableWrap.style.display = "none";
+      noData.style.display = "none";
+      errorEl.innerHTML = "";
+      saveBtn.disabled = true;
+
+      try {
+        // Fetch abhyasis filtered by center only — no pre-loading of saved attendance
+        const abhRes = await fetch(`${BASE}/abhyasis_api.php?center_id=${centerId}`);
+        const abhData = await abhRes.json();
+        if (!abhRes.ok) throw new Error(abhData.error || "Failed to load abhyasis");
+
+        // All rows start unmarked
+        allAbhyasis = abhData.map(a => ({ ...a, is_attend: null }));
+
+        loader.style.display = "none";
+        applyFilter();
+
+      } catch (e) {
+        loader.style.display = "none";
+        showError(e.message);
+      }
+    }
+
+    /* ── Apply PRACTICING filter on cached data ───────────────────── */
+    function applyFilter() {
+      const regularVal = document.getElementById("regularSel").value;
+      const filtered = regularVal
+        ? allAbhyasis.filter(a => (a.is_regular_practicing || "").toLowerCase() === regularVal.toLowerCase())
+        : allAbhyasis;
+      renderRows(filtered);
+    }
+
+    /* ── Colour-code attend select ───────────────────────────────── */
+    window.updateAttendStyle = function (sel) {
+      sel.className = "form-select form-select-sm attend-select " +
+        (sel.value === "P" ? "present" : sel.value === "A" ? "absent" : "unmarked");
+    };
+
+    /* ── Select-all checkbox ─────────────────────────────────────── */
+    selectAllChk.addEventListener("change", function () {
+      document.querySelectorAll(".row-chk").forEach(function (chk) {
+        chk.checked = this.checked;
+        var s = chk.closest("tr").querySelector(".attend-select");
+        if (s) { s.value = this.checked ? "P" : ""; updateAttendStyle(s); }
+      }, this);
+    });
+    tableBody.addEventListener("change", function (e) {
+      if (e.target.classList.contains("row-chk")) {
+        var s = e.target.closest("tr").querySelector(".attend-select");
+        if (s) { s.value = e.target.checked ? "P" : ""; updateAttendStyle(s); }
+        var all = document.querySelectorAll(".row-chk");
+        var chkd = document.querySelectorAll(".row-chk:checked");
+        selectAllChk.checked = all.length === chkd.length;
+        selectAllChk.indeterminate = chkd.length > 0 && chkd.length < all.length;
+      }
+    });
+
+    /* ── Mark P / A on selected (checked) rows only ──────────────── */
+    function markSelected(val) {
+      const checked = document.querySelectorAll(".row-chk:checked");
+      if (!checked.length) {
+        // If nothing checked, apply to all
+        document.querySelectorAll(".attend-select").forEach(s => { s.value = val; updateAttendStyle(s); });
+      } else {
+        checked.forEach(chk => {
+          const sel = chk.closest("tr").querySelector(".attend-select");
+          if (sel) { sel.value = val; updateAttendStyle(sel); }
+        });
+      }
+    }
+
+
+    /* ── Center change → load abhyasis ───────────────────────────── */
+    sdOnChange('centerSel', function(val) {
+      allAbhyasis = [];
+      resetTable();
+      if (val) loadAbhyasis();
+    });
+
+    /* ── PRACTICING filter change → filter cached data ───────────── */
+    document.getElementById("regularSel").addEventListener("change", function () {
+      if (allAbhyasis.length) applyFilter();
+    });
+
+    /* ── Month change → populate Sunday dropdown ─────────────────── */
+    sdOnChange('monthSel', function(month) {
+      const dateSel = document.getElementById("dateSel");
+      sundayBadges.innerHTML = "";
+      dateSel.innerHTML = '<option value="">— Select Sunday —</option>';
+      if (!month) return;
+      const sundays = getSundays(month);
+      renderSundayBadges(sundays);
+      dateSel.innerHTML = '<option value="">— Select Sunday —</option>' +
+        sundays.map(s => {
+          const v = fmtDate(s);
+          return `<option value="${v}">${fmtDisplay(v)} (${v})</option>`;
+        }).join("");
+    });
+
+    /* ── Date change → update date column only, no data fetch ── */
+    document.getElementById("dateSel").addEventListener("change", function () {
+      currentDate = this.value;
+      saveBtn.disabled = !currentDate;
+      // Update the Satsang Date column in all existing rows
+      document.querySelectorAll("#attendanceBody tr").forEach(row => {
+        const dateCell = row.querySelectorAll("td")[7];
+        if (dateCell) dateCell.textContent = currentDate ? fmtDisplay(currentDate) : "—";
+      });
+    });
+
+    /* ── Save attendance ──────────────────────────────────────────── */
+    saveBtn.addEventListener("click", function () {
+      if (!currentDate) { showError("Please select a Satsang Date before saving."); return; }
+      const rows = tableBody.querySelectorAll("tr");
+      const records = [];
+      rows.forEach(row => {
+        const abhyasiId = row.querySelector("input[name='abhyasi_id']")?.value;
+        const sel = row.querySelector(".attend-select");
+        if (abhyasiId && sel) {
+          var av = (sel.value === 'P') ? 'P' : 'A';
+          records.push({
+            abhyasi_id: abhyasiId,
+            satsang_attend_date: currentDate,
+            is_attend: av
+          });
+        }
+      });
+      const btn = this; btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving…';
+      fetch(`${BASE}/attendance_api.php?action=save`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ records })
+      })
+        .then(r => r.json().then(b => { if (!r.ok) throw new Error(b.error || "Save failed"); return b; }))
+        .then(b => {
+          let msg = `&#10003; Saved attendance for ${b.saved} abhyasi(s).`;
+          let type = "success";
+          if (b.duplicates && b.duplicates.length) {
+            msg += `<br><i class="mdi mdi-alert-outline me-1"></i>` +
+              `Already exists (not overwritten): <strong>${b.duplicates.join(", ")}</strong>.`;
+            type = b.saved > 0 ? "warning" : "danger";
+          }
+          showToast(msg, type);
+          if (b.saved > 0) loadAbhyasis();
+        })
+        .catch(err => showError("Save failed: " + err.message))
+        .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="mdi mdi-content-save me-1"></i>Save Attendance'; });
+    });
+
+    function resetTable() {
+      tableBody.innerHTML = "";
+      tableWrap.style.display = "none";
+      noData.style.display = "none";
+      saveBtn.disabled = true;
+      rowCount.textContent = "";
+      errorEl.innerHTML = "";
+      selectAllChk.checked = false;
+      selectAllChk.indeterminate = false;
+    }
+
+    function showError(msg) {
+      errorEl.innerHTML = `<div class="alert alert-danger py-2">
+        <i class="mdi mdi-alert-circle-outline me-1"></i><strong>Error:</strong> ${msg}
+      </div>`;
+      errorEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showToast(msg, type) {
+      const el = document.getElementById("appToast");
+      el.className = `toast align-items-center text-bg-${type} border-0`;
+      el.querySelector(".toast-body").innerHTML = msg;
+      bootstrap.Toast.getOrCreateInstance(el, { delay: type === "success" ? 3500 : 6000 }).show();
+    }
+
+    /* ── Init ─────────────────────────────────────────────────────── */
+    loadCenters();
+    loadMonths();
+    setTimeout(() => {
+      // monthSel auto-triggers via sdOnChange when loadMonths() sets current month
+    }, 100);
+  });
+</script>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+        </div>
+        <div>
+          <a class="navbar-brand brand-logo" href="../../index.html">
+            <img src="../../assets/images/logo.svg" alt="logo" />
+          </a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html">
+            <img src="../../assets/images/logo-mini.svg" alt="logo" />
+          </a>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+          <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+            <h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">John Doe</span></h1>
+            <h3 class="welcome-sub-text">Your performance summary this week </h3>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown d-none d-lg-block">
+            <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#"
+              data-bs-toggle="dropdown" aria-expanded="false"> Select Category </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="messageDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">Select category</p>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Bootstrap Bundle </p>
+                  <p class="fw-light small-text mb-0">This is a Bundle featuring 16 unique dashboards</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Angular Bundle</p>
+                  <p class="fw-light small-text mb-0">Everything you’ll ever need for your Angular projects</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">VUE Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 6 Premium Vue Admin Dashboard</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">React Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 8 Premium React Admin Dashboard</p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item d-none d-lg-block">
+            <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
+              <span class="input-group-addon input-group-prepend border-right">
+                <span class="icon-calendar input-group-text calendar-icon"></span>
+              </span>
+              <input type="text" class="form-control">
+            </div>
+          </li>
+          <li class="nav-item">
+            <form class="search-form" action="#">
+              <i class="icon-search"></i>
+              <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+            </form>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+              <i class="icon-bell"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="notificationDropdown">
+              <a class="dropdown-item py-3 border-bottom">
+                <p class="mb-0 fw-medium float-start">You have 4 new notifications </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-alert m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
+                  <p class="fw-light small-text mb-0"> Just now </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-lock-outline m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
+                  <p class="fw-light small-text mb-0"> Private message </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-airballoon m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
+                  <p class="fw-light small-text mb-0"> 2 days ago </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="icon-mail icon-lg"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="countDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">You have 7 unread mails </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face10.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Marian Garner </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face12.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">David Grey </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face1.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Travis Jenkins </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <!-- TS12-AUTH: user widget injected by ts12-auth.js -->
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-bs-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../../index.html">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Heartfulness</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="menu-icon mdi mdi-floor-plan"></i>
+              <span class="menu-title">Satsang</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-attendance.html">Sunday
+                    Attendance</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false"
+              aria-controls="form-elements">
+              <i class="menu-icon mdi mdi-card-text-outline"></i>
+              <span class="menu-title">Sitting</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="../../pages/tables/view-sitting.html">Individual
+                    Sitting</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+              <i class="menu-icon mdi mdi-table"></i>
+              <span class="menu-title">Centers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-centers.html">Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-subcenters.html">Sub
+                    Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-abhyasis.html">Abhyasis</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-volunteer-works.html">Volunteer
+                    Details</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link"
+                    href="../../pages/tables/view-volunteer-work-abhyasi.html">Volunteer Work Abhyasi</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+              <i class="menu-icon mdi mdi-layers-outline"></i>
+              <span class="menu-title">Reports</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="icons">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-reports.html">All Reports</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nav-events" aria-expanded="false"
+              aria-controls="nav-events">
+              <i class="menu-icon mdi mdi-file-document"></i>
+              <span class="menu-title">Events</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nav-events">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-events.html">All Events</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+
+                  <div id="errorEl" class="mb-2"></div>
+
+                  <!-- ── Filter Bar ── -->
+                  <div class="filter-card mb-4">
+                    <div class="d-flex align-items-center mb-3 gap-2">
+                      <i class="mdi mdi-calendar-check me-1" style="color:#4B49AC; font-size:1.4rem;"></i>
+                      <h5 class="mb-0 fw-bold" style="color:#4B49AC;">Attendance Sheet</h5>
+                    </div>
+                    <div class="row g-3 align-items-end" style="flex-wrap:wrap;">
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold text-muted small">CENTER <span
+                            class="text-danger">*</span></label>
+<div class="sd-wrap" id="sdWrap_centerSel">
+                          <div class="sd-input-row" onclick="sdToggle('centerSel')">
+                            <span class="sd-display placeholder" id="sdDisplay_centerSel">— Select Center —</span>
+                            <span class="sd-chevron">▼</span>
+                          </div>
+                          <div class="sd-panel">
+                            <div class="sd-search-box">
+                              <input type="text" placeholder="Search center…" id="sdSearch_centerSel"
+                                     oninput="sdFilter('centerSel')" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="sd-list" id="sdList_centerSel"></div>
+                          </div>
+                        </div>
+                        <input type="hidden" id="centerSel" value="">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold text-muted small">MONTH <span
+                            class="text-danger">*</span></label>
+<div class="sd-wrap" id="sdWrap_monthSel">
+                          <div class="sd-input-row" onclick="sdToggle('monthSel')">
+                            <span class="sd-display placeholder" id="sdDisplay_monthSel">— Select Month —</span>
+                            <span class="sd-chevron">▼</span>
+                          </div>
+                          <div class="sd-panel">
+                            <div class="sd-search-box">
+                              <input type="text" placeholder="Search month…" id="sdSearch_monthSel"
+                                     oninput="sdFilter('monthSel')" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="sd-list" id="sdList_monthSel"></div>
+                          </div>
+                        </div>
+                        <input type="hidden" id="monthSel" value="">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold text-muted small">SATSANG DATE (SUNDAY) <span
+                            class="text-danger">*</span></label>
+                        <select id="dateSel" class="form-select form-select-sm">
+                          <option value="">— Select Sunday —</option>
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold text-muted small">PRACTICING</label>
+                        <select id="regularSel" class="form-select form-select-sm">
+                          <option value="">— All Abhyasis —</option>
+                          <option value="yes">Regular Practicing (Yes)</option>
+                          <option value="no">Non-Regular (No)</option>
+                        </select>
+                      </div>
+
+                    </div>
+                    <div id="sundayBadges" class="mt-2"></div>
+                  </div>
+
+                  <!-- ── Loader ── -->
+                  <div id="loader" style="display:none" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="text-muted mt-2 small">Loading abhyasis…</div>
+                  </div>
+
+                  <!-- ── No data ── -->
+                  <div id="noData" style="display:none" class="text-center text-muted py-4">
+                    <i class="mdi mdi-account-off-outline mdi-48px d-block mb-2" style="color:#ccc;"></i>
+                    No abhyasis found for the selected center.
+                  </div>
+
+                  <!-- ── Table + Save ── -->
+                  <div id="tableWrap" style="display:none;">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <span id="rowCount" class="text-muted small fw-semibold"></span>
+                      <button id="saveBtn" class="btn btn-sm text-white" style="background:#4B49AC;" disabled>
+                        <i class="mdi mdi-content-save me-1"></i>Save Attendance
+                      </button>
+                    </div>
+                    <div class="table-responsive" style="-webkit-overflow-scrolling:touch;" style="max-height:520px; overflow-y:auto;">
+                      <table class="table table-bordered table-sm mb-0" id="attendanceTable">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width:40px;">
+                              <input type="checkbox" id="selectAllChk" class="form-check-input" title="Select all"
+                                style="cursor:pointer;">
+                            </th>
+                            <th class="text-center" style="width:40px;">#</th>
+                            <th>Abhyasi Name</th>
+                            <th>SRCM ID</th>
+                            <th>Mobile</th>
+                            <th>Center</th>
+                            <th>Sub-Center</th>
+                            <th class="text-center">Satsang Date</th>
+                            <th class="text-center" style="width:90px;">Attend</th>
+                          </tr>
+                        </thead>
+                        <tbody id="attendanceBody"></tbody>
+                      </table>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
+                href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from
+              BootstrapDash.</span>
+            <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights
+              reserved.</span>
+          </div>
+        </footer>
+      </div>
+      <!-- main-panel ends -->
+    </div>
+  </div>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+  <script src="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+  <script src="../../assets/js/off-canvas.js"></script>
+  <script src="../../assets/js/template.js"></script>
+  <script src="../../assets/js/settings.js"></script>
+  <script src="../../assets/js/hoverable-collapse.js"></script>
+  <script src="../../assets/js/todolist.js"></script>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:11000">
+    <div id="appToast" class="toast align-items-center border-0" role="alert" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body fw-semibold"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+  <script>
+
+    (function () {
+      "use strict";
+
+      /* ── 1. Read session ── */
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem("ts12_user") || "null"); } catch (e) { }
+
+      var path = window.location.pathname;
+      var page = (path.split("/").pop() || "index.html").split("?")[0];
+      var inTables = path.indexOf("/pages/tables/") !== -1;
+      var loginUrl = inTables ? "../../login.html" : "login.html";
+      var indexUrl = inTables ? "../../index.html" : "index.html";
+
+      /* ── 2. No session → redirect to login ── */
+      if (!session || !session.srcm_id) {
+        window.location.replace(loginUrl);
+        return;
+      }
+
+      var FULL_ROLES = ["zc", "cc", "dc", "nc"];   /* NC gets full access */
+      var DELETE_ROLES = ["zc", "dc"];
+
+      var roles = (session.roles || []).map(function (r) { return r.toLowerCase().trim(); });
+
+      /* Always re-derive from roles[] - never trust the cached localStorage value.
+         This ensures NC (and any other role) always gets the correct access level. */
+      var roleLevel = roles.some(function (r) { return FULL_ROLES.indexOf(r) !== -1; }) ? "full" : "preceptor";
+      var canDelete = roles.some(function (r) { return DELETE_ROLES.indexOf(r) !== -1; });
+
+      /* Write corrected values back so they stay consistent */
+      session.roleLevel = roleLevel;
+      session.canDelete = canDelete;
+      try { localStorage.setItem("ts12_user", JSON.stringify(session)); } catch (e) { }
+
+      /* ── 3. Preceptor page guard ── */
+      var adminPages = ["view-abhyasis.html", "view-centers.html", "view-subcenters.html",
+        "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+      if (roleLevel === "preceptor" && adminPages.indexOf(page) !== -1) {
+        window.location.replace(indexUrl);
+        return;
+      }
+
+      /* ── 4. Build user dropdown HTML ── */
+      function buildUserMenu() {
+        var initial = (session.name || "?").charAt(0).toUpperCase();
+        var badges = (session.roles || []).map(function (r) {
+          return '<span style="display:inline-block;font-size:.58rem;font-weight:700;padding:1px 7px;'
+            + 'border-radius:20px;background:rgba(255,255,255,.25);color:#fff;'
+            + 'border:1px solid rgba(255,255,255,.4);text-transform:uppercase;margin:1px;">' + r + '</span>';
+        }).join("");
+        var access = canDelete
+          ? '<span style="color:#00b894;font-weight:600;">Full Access + Delete</span>'
+          : roleLevel === "full"
+            ? '<span style="color:#4B49AC;font-weight:600;">Full Access</span>'
+            : '<span style="color:#e17055;font-weight:600;">Limited Access</span>';
+
+        return ''
+          + '<li class="nav-item dropdown d-none d-lg-block" id="ts12UserMenu">'
+          + '<a class="nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false" style="padding:8px 6px;">'
+          + '<div style="width:34px;height:34px;border-radius:50%;'
+          + 'background:linear-gradient(135deg,#4B49AC,#7b79d4);'
+          + 'display:flex;align-items:center;justify-content:center;'
+          + 'color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;'
+          + 'box-shadow:0 2px 8px rgba(75,73,172,.4);">' + initial + '</div></a>'
+          + '<div class="dropdown-menu dropdown-menu-right navbar-dropdown" '
+          + 'style="min-width:230px;border-radius:14px;overflow:hidden;'
+          + 'box-shadow:0 8px 32px rgba(75,73,172,.2);border:1px solid #e4e4f5;padding:0;">'
+          /* Header */
+          + '<div style="background:linear-gradient(135deg,#4B49AC,#7b79d4);padding:1rem;text-align:center;">'
+          + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.22);'
+          + 'display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;'
+          + 'font-size:1.5rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.4);">'
+          + initial + '</div>'
+          + '<p style="margin:0;font-weight:700;color:#fff;font-size:.9rem;">' + (session.name || "") + '</p>'
+          + '<p style="margin:2px 0 6px;color:rgba(255,255,255,.75);font-size:.7rem;">' + session.srcm_id + '</p>'
+          + '<div>' + badges + '</div></div>'
+          /* Access */
+          + '<div style="padding:.5rem .9rem;border-bottom:1px solid #eef;font-size:.76rem;'
+          + 'display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-shield-check-outline" style="color:#4B49AC;"></i>' + access + '</div>'
+          /* Sign Out */
+          + '<a class="dropdown-item" onclick="ts12Logout()" '
+          + 'style="cursor:pointer;color:#d63031;font-size:.82rem;padding:.6rem .9rem;display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-logout" style="font-size:1rem;"></i> Sign Out</a>'
+          + '</div></li>';
+      }
+
+      /* ── 5. Replace Login button with user menu ── */
+      function renderUserMenu() {
+        /* Hide/remove the Login button */
+        var loginLi = document.getElementById("ts12LoginNavItem");
+        if (loginLi) loginLi.remove();
+
+        /* Remove any old user menu */
+        var old = document.getElementById("ts12UserMenu");
+        if (old) old.remove();
+
+        /* Find the right <ul> and append */
+        var ul = document.querySelector(".navbar-menu-wrapper .navbar-nav.ms-auto");
+        if (ul) {
+          ul.insertAdjacentHTML("beforeend", buildUserMenu());
+        }
+      }
+
+      /* ── 6. Hide preceptor-restricted sidebar links ── */
+      function hideSidebarLinks() {
+        if (roleLevel === "full") return;
+        var restricted = ["view-centers.html", "view-subcenters.html", "view-abhyasis.html",
+          "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+        document.querySelectorAll("#sidebar a, .sidebar a").forEach(function (a) {
+          var href = (a.getAttribute("href") || "").split("/").pop().split("?")[0];
+          if (restricted.indexOf(href) !== -1) {
+            var li = a.closest("li");
+            if (li) li.style.display = "none";
+          }
+        });
+        /* Hide empty parent collapse items */
+        document.querySelectorAll("#sidebar .collapse, .sidebar .collapse").forEach(function (col) {
+          var vis = Array.from(col.querySelectorAll("li.nav-item")).filter(function (li) {
+            return li.style.display !== "none";
+          });
+          if (!vis.length && col.querySelectorAll("li.nav-item").length) {
+            var par = col.closest("li.nav-item");
+            if (par) par.style.display = "none";
+          }
+        });
+      }
+
+      /* ── 7. Disable delete buttons for non-ZC/DC ── */
+      var TIP = "Delete is restricted to ZC and DC roles only";
+      function lockDeleteButtons() {
+        if (canDelete) return;
+        function lock(btn) {
+          if (!btn || btn._ts12locked) return;
+          btn._ts12locked = true;
+          btn.disabled = true;
+          btn.title = TIP;
+          btn.style.cssText += ";opacity:0.3!important;cursor:not-allowed!important;pointer-events:none!important;";
+        }
+        document.querySelectorAll(".btn-outline-danger,.row-del,.img-del-btn").forEach(lock);
+        var conf = document.getElementById("confirmDeleteBtn");
+        if (conf) lock(conf);
+        if (!window._ts12NoDel) {
+          window._ts12NoDel = true;
+          var no = function () { alert(TIP); return false; };
+          window.openDeleteModal = no; window.deleteEvent = no;
+          window.removeAbhyasi = no; window.deleteImage = no;
+        }
+      }
+
+      /* ── 8. Globals ── */
+      window.ts12User = session; window.ts12Roles = roles;
+      window.ts12RoleLevel = roleLevel; window.ts12CanDelete = canDelete;
+      window.ts12Logout = function () {
+        localStorage.removeItem("ts12_user");
+        window.location.replace(loginUrl);
+      };
+
+      /* ── 9. Boot ── */
+      function boot() {
+        renderUserMenu();
+        hideSidebarLinks();
+        lockDeleteButtons();
+        setTimeout(lockDeleteButtons, 600);
+        setTimeout(lockDeleteButtons, 1800);
+        var obs = new MutationObserver(lockDeleteButtons);
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        setTimeout(boot, 0);  /* yield to let DOM settle */
+      }
+
+    })();
+
+  </script>
+
+  <!-- ── Searchable Dropdown Engine ─────────────────────────────── -->
+  <script>
+  (function () {
+    "use strict";
+    var _sdReg = {};
+
+    window.sdPopulate = function (id, options, placeholder) {
+      _sdReg[id] = _sdReg[id] || {};
+      _sdReg[id].options     = options || [];
+      _sdReg[id].placeholder = placeholder || '— Select —';
+      var list   = document.getElementById('sdList_' + id);
+      var hidden = document.getElementById(id);
+      if (!list || !hidden) return;
+      list.innerHTML = '';
+      var allEl = document.createElement('div');
+      allEl.className = 'sd-option selected';
+      allEl.dataset.value = ''; allEl.dataset.label = placeholder;
+      allEl.textContent = placeholder;
+      allEl.onclick = function () { sdSelect(id, '', placeholder); };
+      list.appendChild(allEl);
+      (options || []).forEach(function (opt) {
+        var el = document.createElement('div');
+        el.className = 'sd-option'; el.dataset.value = String(opt.value); el.dataset.label = opt.label;
+        el.textContent = opt.label;
+        el.onclick = function () { sdSelect(id, String(opt.value), opt.label); };
+        list.appendChild(el);
+      });
+      sdSelect(id, '', placeholder, true);
+    };
+
+    function sdSelect(id, value, label, silent) {
+      var hidden  = document.getElementById(id);
+      var display = document.getElementById('sdDisplay_' + id);
+      var wrap    = document.getElementById('sdWrap_' + id);
+      if (!hidden || !display) return;
+      hidden.value = value;
+      display.textContent = label;
+      display.classList.toggle('placeholder', value === '' || value === null);
+      var list = document.getElementById('sdList_' + id);
+      if (list) list.querySelectorAll('.sd-option').forEach(function (el) {
+        el.classList.toggle('selected', el.dataset.value === String(value));
+      });
+      if (wrap) wrap.classList.remove('open');
+      if (!silent && _sdReg[id] && _sdReg[id].onChange) _sdReg[id].onChange(value);
+    }
+
+    window.sdToggle = function (id) {
+      var wrap = document.getElementById('sdWrap_' + id);
+      if (!wrap) return;
+      var wasOpen = wrap.classList.contains('open');
+      document.querySelectorAll('.sd-wrap.open').forEach(function (el) { el.classList.remove('open'); });
+      if (!wasOpen) {
+        wrap.classList.add('open');
+        var inp = document.getElementById('sdSearch_' + id);
+        if (inp) { inp.value = ''; sdFilter(id); setTimeout(function () { inp.focus(); }, 30); }
+      }
+    };
+
+    window.sdFilter = function (id) {
+      var inp  = document.getElementById('sdSearch_' + id);
+      var list = document.getElementById('sdList_' + id);
+      if (!inp || !list) return;
+      var q = inp.value.trim().toLowerCase();
+      var opts = list.querySelectorAll('.sd-option');
+      var visible = 0;
+      opts.forEach(function (el) {
+        var show = !q || el.dataset.label.toLowerCase().includes(q);
+        el.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      var noRes = list.querySelector('.sd-no-results');
+      if (!noRes) { noRes = document.createElement('div'); noRes.className = 'sd-no-results'; noRes.textContent = 'No results'; list.appendChild(noRes); }
+      noRes.style.display = visible === 0 ? 'block' : 'none';
+    };
+
+    window.sdOnChange = function (id, fn) {
+      _sdReg[id] = _sdReg[id] || {};
+      _sdReg[id].onChange = fn || null;
+    };
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.sd-wrap')) document.querySelectorAll('.sd-wrap.open').forEach(function (el) { el.classList.remove('open'); });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      var openWrap = document.querySelector('.sd-wrap.open');
+      if (!openWrap) return;
+      var id   = openWrap.id.replace('sdWrap_', '');
+      var list = document.getElementById('sdList_' + id);
+      if (!list) return;
+      var opts = Array.from(list.querySelectorAll('.sd-option:not(.hidden)'));
+      var focused = list.querySelector('.sd-option.focused');
+      var idx = opts.indexOf(focused);
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (focused) focused.classList.remove('focused'); var n = opts[idx+1]||opts[0]; if(n){n.classList.add('focused');n.scrollIntoView({block:'nearest'});} }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (focused) focused.classList.remove('focused'); var p = opts[idx-1]||opts[opts.length-1]; if(p){p.classList.add('focused');p.scrollIntoView({block:'nearest'});} }
+      else if (e.key === 'Enter') { e.preventDefault(); if (focused) focused.click(); }
+      else if (e.key === 'Escape') { openWrap.classList.remove('open'); }
+    });
+  })();
+  </script>
+
+
+
+
+  <!-- ── TS12 Mobile Sidebar & SD Backdrop ───────────────────── -->
+  <script>
+  (function () {
+    var sidebar  = document.getElementById('sidebar');
+    var toggler  = document.querySelector('.navbar-toggler-right[data-bs-toggle="offcanvas"]');
+    if (!sidebar) return;
+
+    /* ── Sidebar open / close ─────────────────────────────────── */
+    function openSidebar() {
+      sidebar.classList.add('ts12-open');
+      document.body.classList.add('ts12-sidebar-open');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('ts12-open');
+      document.body.classList.remove('ts12-sidebar-open');
+    }
+    if (toggler) {
+      toggler.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sidebar.classList.contains('ts12-open') ? closeSidebar() : openSidebar();
+      });
+    }
+    // Close on backdrop click
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('ts12-open') &&
+          !sidebar.contains(e.target) &&
+          (!toggler || !toggler.contains(e.target))) {
+        closeSidebar();
+      }
+    });
+    // Close on nav link click (page navigation on mobile)
+    sidebar.querySelectorAll('a.nav-link:not([data-bs-toggle])').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (window.innerWidth < 992) closeSidebar();
+      });
+    });
+    // Swipe left on sidebar to close
+    var _tx = 0;
+    sidebar.addEventListener('touchstart', function (e) { _tx = e.touches[0].clientX; }, { passive: true });
+    sidebar.addEventListener('touchend',   function (e) {
+      if (e.changedTouches[0].clientX - _tx < -48) closeSidebar();
+    }, { passive: true });
+
+    /* ── Searchable-dropdown backdrop (mobile bottom-sheet) ─────── */
+    var sdBackdrop = document.createElement('div');
+    sdBackdrop.className = 'sd-backdrop';
+    document.body.appendChild(sdBackdrop);
+    sdBackdrop.addEventListener('click', function () {
+      document.querySelectorAll('.sd-wrap.open').forEach(function (w) { w.classList.remove('open'); });
+      sdBackdrop.classList.remove('visible');
+    });
+    // Patch sdToggle to show/hide backdrop on mobile
+    var _origToggle = window.sdToggle;
+    window.sdToggle = function (id) {
+      if (_origToggle) _origToggle(id);
+      if (window.innerWidth <= 767) {
+        var isOpen = document.getElementById('sdWrap_' + id) &&
+                     document.getElementById('sdWrap_' + id).classList.contains('open');
+        sdBackdrop.classList.toggle('visible', isOpen);
+      }
+    };
+  })();
+  </script>
+
+</body>
+
+</html>

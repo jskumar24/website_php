@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Admin Panel</title>
+  <title>TS-12 Attendance System</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="assets/vendors/feather/feather.css">
   <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
@@ -24,22 +24,15 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="assets/images/favicon.png" />
+  <!-- PDF export libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="assets/css/ts12-mobile.css">
 </head>
 
 <body class="with-welcome-text">
   <div class="container-scroller">
-    <div class="row p-0 m-0 proBanner" id="proBanner">
-      <div class="col-md-12 p-0 m-0">
-        <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
-          <div class="ps-lg-3">
-            <div class="d-flex align-items-center justify-content-between">
-              <p class="mb-0 fw-medium me-3 buy-now-text"></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
         <div class="me-3">
@@ -59,9 +52,31 @@
       <div class="navbar-menu-wrapper d-flex align-items-top">
         <ul class="navbar-nav">
           <li class="nav-item fw-semibold d-none d-lg-block ms-0">
-            <h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">Server NextGen</span></h1>
+            <h1 class="welcome-text">TS-12 <span class="text-black fw-bold">Attendance System</span></h1>
+            <!-- <h3 class="welcome-sub-text">Your performance summary this week </h3> -->
           </li>
         </ul>
+
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item d-none d-lg-block">
+            <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
+              <span class="input-group-addon input-group-prepend border-right">
+                <span class="icon-calendar input-group-text calendar-icon"></span>
+              </span>
+              <input type="text" class="form-control">
+            </div>
+          </li>
+          <!-- TS12-AUTH: dynamic user widget injected by ts12-auth.js -->
+          <li class="nav-item d-none d-lg-block" id="ts12LoginNavItem">
+            <a href="login.html" style="display:inline-flex;align-items:center;gap:.35rem;
+                      background:#4B49AC;color:#fff;border-radius:20px;
+                      padding:5px 16px;font-size:.8rem;font-weight:700;
+                      text-decoration:none;border:none;">
+              <i class="mdi mdi-login-variant"></i> Login
+            </a>
+          </li>
+        </ul>
+
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
           data-bs-toggle="offcanvas">
           <span class="mdi mdi-menu"></span>
@@ -79,33 +94,87 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          <!-- <li class="nav-item nav-category">Plans</li> -->
+          <li class="nav-item nav-category">Heartfulness</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
               aria-controls="ui-basic">
               <i class="menu-icon mdi mdi-floor-plan"></i>
-              <span class="menu-title">Plans</span>
+              <span class="menu-title">Satsang</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Add Plan</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Edit Plan</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Delete Plan</a></li>
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-attendance.html">Sunday Attendance</a>
+                </li>
               </ul>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-              <i class="menu-icon mdi mdi-file-document"></i>
-              <span class="menu-title">Documentation</span>
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false"
+              aria-controls="form-elements">
+              <i class="menu-icon mdi mdi-card-text-outline"></i>
+              <span class="menu-title">Sitting</span>
               <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="auth">
+            <div class="collapse" id="form-elements">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+                <li class="nav-item"><a class="nav-link" href="pages/tables/view-sitting.html">Individual Sitting</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+              <i class="menu-icon mdi mdi-table"></i>
+              <span class="menu-title">Centers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-centers.html">Centers</a>
+                </li>
+
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-subcenters.html">Sub Centers</a>
+                </li>
+
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-abhyasis.html">Abhyasis</a>
+                </li>
+
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-volunteer-works.html">Volunteer
+                    Works</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-volunteer-work-abhyasi.html">Volunteer
+                    Work Abhyasi</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nav-reports" aria-expanded="false"
+              aria-controls="nav-reports">
+              <i class="menu-icon mdi mdi-layers-outline"></i>
+              <span class="menu-title">Reports</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nav-reports">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-reports.html">All Reports</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nav-events" aria-expanded="false"
+              aria-controls="nav-events">
+              <i class="menu-icon mdi mdi-file-document"></i>
+              <span class="menu-title">Events</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nav-events">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="pages/tables/view-events.html">All Events</a>
+                </li>
               </ul>
             </div>
           </li>
@@ -117,13 +186,288 @@
           <div class="row">
             <div class="col-sm-12">
               <div class="home-tab">
-                <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                <div class="d-flex flex-wrap align-items-center justify-content-between border-bottom gap-2 pb-2">
                   <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#dashboard" role="tab"
-                        aria-controls="dashboard" aria-selected="true">Dashboard</a>
+                      <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab"
+                        aria-controls="overview" aria-selected="true">TS-12 Zone</a>
                     </li>
                   </ul>
+                  <div>
+                    <div class="btn-wrapper">
+                      <!-- <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                      <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a> -->
+                      <div class="dropdown d-inline-block">
+                        <button class="btn btn-primary text-white me-0 dropdown-toggle" type="button"
+                                id="exportDropBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="icon-download"></i> Export PDF
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="exportDropBtn"
+                            style="min-width:270px;">
+                          <!-- ★ Combined option at top -->
+                          <li>
+                            <a class="dropdown-item fw-bold" href="#" onclick="exportAllReports(); return false;"
+                               style="background:#f0eeff;color:#4B49AC;border-radius:6px;margin:4px 8px;width:calc(100% - 16px);">
+                              <i class="mdi mdi-file-pdf-box me-2" style="color:#4B49AC;font-size:1.1rem;"></i>
+                              All Reports — Single PDF
+                            </a>
+                          </li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><h6 class="dropdown-header" style="font-size:.7rem;color:#4B49AC;">INDIVIDUAL REPORTS</h6></li>
+                          <li>
+                            <a class="dropdown-item" href="#" onclick="exportDashboardPDF(); return false;">
+                              <i class="mdi mdi-view-dashboard-outline me-2 text-primary"></i>
+                              Dashboard Summary
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#" onclick="exportSatsangReport(); return false;">
+                              <i class="mdi mdi-calendar-check-outline me-2 text-success"></i>
+                              Sunday Satsang – Center × Month
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#" onclick="exportSittingReport(); return false;">
+                              <i class="mdi mdi-meditation me-2 text-info"></i>
+                              Sitting – Center × Preceptor × Month
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="#" onclick="exportEventsReport(); return false;">
+                              <i class="mdi mdi-star-circle-outline me-2 text-warning"></i>
+                              Events – Full Report
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content tab-content-basic">
+                  <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+
+                    <!-- ROW 1: Satsang Attendance (8) | Status Summary + Circles (4) -->
+                    <div class="row align-items-stretch mb-4" id="dashRow1">
+                      <!-- Satsang Attendance -->
+                      <div class="col-12 col-lg-8 d-flex">
+                        <div class="card card-rounded w-100">
+                          <div class="card-body d-flex flex-column">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Satsang Attendance</h4>
+                                <h5 class="card-subtitle card-subtitle-dash" id="attendChartSubtitle">Sunday-wise
+                                  present count per month</h5>
+                              </div>
+                              <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="dropdown">
+                                  <button type="button" id="centerDropBtn" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false"
+                                    style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#f0f0f0;border:none;border-radius:20px;font-size:.85rem;font-weight:600;color:#1a1a2e;cursor:pointer;white-space:nowrap;">
+                                    <span id="centerDropLabel">All Centers</span>
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                      <path d="M2 4l4 4 4-4" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu shadow-sm" id="centerDropMenu"
+                                    style="min-width:200px;max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid #eee;padding:6px;">
+                                  </div>
+                                  <input type="hidden" id="chartCenterSel" value="">
+                                </div>
+                                <div class="dropdown">
+                                  <button type="button" id="monthDropBtn" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false"
+                                    style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#f0f0f0;border:none;border-radius:20px;font-size:.85rem;font-weight:600;color:#1a1a2e;cursor:pointer;white-space:nowrap;">
+                                    <span id="monthDropLabel">Select Month</span>
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                      <path d="M2 4l4 4 4-4" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu shadow-sm" id="monthDropMenu"
+                                    style="min-width:200px;max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid #eee;padding:6px;">
+                                  </div>
+                                  <input type="hidden" id="chartMonthSel" value="">
+                                </div>
+                                <div id="attendChart-legend"
+                                  class="d-flex gap-3 align-items-center small fw-semibold mt-1"></div>
+                              </div>
+                            </div>
+                            <div class="flex-grow-1 mt-3" style="position:relative;min-height:200px;">
+                              <canvas id="attendanceLineChart"></canvas>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- TS-12 Zone Status Summary + Circles stacked -->
+                      <div class="col-12 col-lg-4 d-flex flex-column gap-3 mt-3 mt-lg-0">
+                        <!-- Blue summary card -->
+                        <div class="card bg-primary card-rounded flex-shrink-0">
+                          <div class="card-body pb-0">
+                            <h4 class="card-title card-title-dash text-white mb-3">TS-12 Zone Status Summary</h4>
+                            <div class="row align-items-center">
+                              <div class="col-5">
+                                <p style="color:rgba(255,255,255,.7);font-size:.78rem;margin-bottom:2px;"
+                                  id="summaryYearLabel">This Year</p>
+                                <h2 class="text-info mb-0" id="summaryYearlyPresent">—</h2>
+                              </div>
+                              <div class="col-7">
+                                <div class="status-summary-chart-wrapper" style="height:80px;">
+                                  <canvas id="status-summary"></canvas>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Circles card -->
+                        <div class="card card-rounded flex-grow-1">
+                          <div class="card-body d-flex align-items-center">
+                            <div class="row w-100">
+                              <div class="col-6">
+                                <div class="d-flex align-items-center gap-2">
+                                  <div class="circle-progress-width" style="flex-shrink:0;">
+                                    <div id="totalVisitors" class="progressbar-js-circle pr-2"></div>
+                                  </div>
+                                  <div>
+                                    <p class="text-small mb-1">Total Attendees</p>
+                                    <h5 class="mb-0 fw-bold" id="summaryYearlyPct">—</h5>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-6">
+                                <div class="d-flex align-items-center gap-2">
+                                  <div class="circle-progress-width" style="flex-shrink:0;">
+                                    <div id="visitperday" class="progressbar-js-circle pr-2"></div>
+                                  </div>
+                                  <div>
+                                    <p class="text-small mb-1" id="summaryMonthLabel">This Month</p>
+                                    <h5 class="mb-0 fw-bold" id="summaryMonthlyPresent">—</h5>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- ROW 2: Individual Sitting (8) | Zone Activities (4) -->
+                    <div class="row align-items-stretch mb-4" id="dashRow2">
+                      <!-- Individual Sitting bar chart -->
+                      <div class="col-12 col-lg-8 d-flex">
+                        <div class="card card-rounded w-100">
+                          <div class="card-body d-flex flex-column">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title card-title-dash">Individual Sitting</h4>
+                                <p class="card-subtitle card-subtitle-dash">Monthly sitting count — this year vs last
+                                  year</p>
+                              </div>
+                              <div class="dropdown">
+                                <button type="button" id="sittingCenterBtn" data-bs-toggle="dropdown"
+                                  aria-haspopup="true" aria-expanded="false"
+                                  style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#f0f0f0;border:none;border-radius:20px;font-size:.85rem;font-weight:600;color:#1a1a2e;cursor:pointer;white-space:nowrap;">
+                                  <span id="sittingCenterLabel">All Centers</span>
+                                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M2 4l4 4 4-4" stroke="#1a1a2e" stroke-width="1.8" stroke-linecap="round"
+                                      stroke-linejoin="round" />
+                                  </svg>
+                                </button>
+                                <div class="dropdown-menu shadow-sm" id="sittingCenterMenu"
+                                  style="min-width:200px;max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid #eee;padding:6px;">
+                                </div>
+                                <input type="hidden" id="sittingCenterSel" value="">
+                              </div>
+                            </div>
+                            <div class="d-sm-flex align-items-center mt-2 justify-content-between">
+                              <div class="d-sm-flex align-items-center gap-2">
+                                <h3 class="me-1 fw-bold mb-0" id="sittingTotal">—</h3>
+                                <span class="text-muted fw-semibold" style="font-size:.85rem;">sittings</span>
+                                <span id="sittingGrowth" class="fw-semibold ms-1" style="font-size:.85rem;"></span>
+                              </div>
+                              <div class="d-flex gap-3 align-items-center small fw-semibold me-2">
+                                <span style="display:inline-flex;align-items:center;gap:5px;">
+                                  <span
+                                    style="width:10px;height:10px;border-radius:50%;background:#57d2f5;display:inline-block;"></span>
+                                  <span id="sittingLastYearLabel">Last year</span>
+                                </span>
+                                <span style="display:inline-flex;align-items:center;gap:5px;">
+                                  <span
+                                    style="width:10px;height:10px;border-radius:50%;background:#4B49AC;display:inline-block;"></span>
+                                  <span id="sittingThisYearLabel">This year</span>
+                                </span>
+                              </div>
+                            </div>
+                            <div class="flex-grow-1 mt-3" style="position:relative;min-height:200px;">
+                              <canvas id="sittingBarChart"></canvas>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Zone Activities donut -->
+                      <div class="col-12 col-lg-4 d-flex mt-3 mt-lg-0">
+                        <div class="card card-rounded w-100">
+                          <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                              <div>
+                                <h4 class="card-title card-title-dash mb-0">Zone Activities</h4>
+                                <p class="card-subtitle card-subtitle-dash" id="actYearLabel">Current Year</p>
+                              </div>
+                              <div style="text-align:right;">
+                                <p class="text-small text-muted mb-0">Total</p>
+                                <h3 class="fw-bold mb-0" id="actTotal">—</h3>
+                              </div>
+                            </div>
+                            <div style="position:relative;height:200px;margin-top:4px;">
+                              <canvas id="activitiesDonut"></canvas>
+                            </div>
+                            <div id="activitiesLegend" class="mt-3 d-flex justify-content-center gap-3 flex-wrap"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- ROW 3: Preceptor Sittings full width -->
+                    <div class="row mb-4" id="dashRow3">
+                      <div class="col-12">
+                        <div class="card card-rounded">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start mb-3">
+                              <div>
+                                <h4 class="card-title card-title-dash">Preceptor Sittings</h4>
+                                <p class="card-subtitle card-subtitle-dash" id="preceptorSubtitle">Individual sitting
+                                  summary — current year</p>
+                              </div>
+                              <div style="text-align:right;">
+                                <p class="text-small text-muted mb-0">Total Sittings</p>
+                                <h4 class="fw-bold mb-0" id="preceptorTotal">—</h4>
+                              </div>
+                            </div>
+                            <div class="table-responsive">
+                              <table class="table select-table" id="preceptorTable">
+                                <thead>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Preceptor</th>
+                                    <th>Abhyasis</th>
+                                    <th>Progress</th>
+                                    <th>Last Sitting</th>
+                                    <th>Share</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="preceptorTbody">
+                                  <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">Loading...</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
               </div>
             </div>
@@ -167,6 +511,1476 @@
   <script src="assets/js/dashboard.js"></script>
   <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
   <!-- End custom js for this page-->
+  <script>
+
+    (function () {
+      "use strict";
+
+      /* ── 1. Read session ── */
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem("ts12_user") || "null"); } catch (e) { }
+
+      var path = window.location.pathname;
+      var page = (path.split("/").pop() || "index.html").split("?")[0];
+      var inTables = path.indexOf("/pages/tables/") !== -1;
+      var loginUrl = inTables ? "../../login.html" : "login.html";
+      var indexUrl = inTables ? "../../index.html" : "index.html";
+
+      /* ── 2. No session → redirect to login ── */
+      if (!session || !session.srcm_id) {
+        window.location.replace(loginUrl);
+        return;
+      }
+
+      var FULL_ROLES = ["zc", "cc", "dc", "nc"];   /* NC gets full access */
+      var DELETE_ROLES = ["zc", "dc"];
+
+      var roles = (session.roles || []).map(function (r) { return r.toLowerCase().trim(); });
+
+      /* Always re-derive from roles[] - never trust the cached localStorage value.
+         This ensures NC (and any other role) always gets the correct access level. */
+      var roleLevel = roles.some(function (r) { return FULL_ROLES.indexOf(r) !== -1; }) ? "full" : "preceptor";
+      var canDelete = roles.some(function (r) { return DELETE_ROLES.indexOf(r) !== -1; });
+
+      /* Write corrected values back so they stay consistent */
+      session.roleLevel = roleLevel;
+      session.canDelete = canDelete;
+      try { localStorage.setItem("ts12_user", JSON.stringify(session)); } catch (e) { }
+
+      /* ── 3. Preceptor page guard ── */
+      var adminPages = ["view-abhyasis.html", "view-centers.html", "view-subcenters.html",
+        "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+      if (roleLevel === "preceptor" && adminPages.indexOf(page) !== -1) {
+        window.location.replace(indexUrl);
+        return;
+      }
+
+      /* ── 4. Build user dropdown HTML ── */
+      function buildUserMenu() {
+        var initial = (session.name || "?").charAt(0).toUpperCase();
+        var badges = (session.roles || []).map(function (r) {
+          return '<span style="display:inline-block;font-size:.58rem;font-weight:700;padding:1px 7px;'
+            + 'border-radius:20px;background:rgba(255,255,255,.25);color:#fff;'
+            + 'border:1px solid rgba(255,255,255,.4);text-transform:uppercase;margin:1px;">' + r + '</span>';
+        }).join("");
+        var access = canDelete
+          ? '<span style="color:#00b894;font-weight:600;">Full Access + Delete</span>'
+          : roleLevel === "full"
+            ? '<span style="color:#4B49AC;font-weight:600;">Full Access</span>'
+            : '<span style="color:#e17055;font-weight:600;">Limited Access</span>';
+
+        return ''
+          + '<li class="nav-item dropdown d-none d-lg-block" id="ts12UserMenu">'
+          + '<a class="nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false" style="padding:8px 6px;">'
+          + '<div style="width:34px;height:34px;border-radius:50%;'
+          + 'background:linear-gradient(135deg,#4B49AC,#7b79d4);'
+          + 'display:flex;align-items:center;justify-content:center;'
+          + 'color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;'
+          + 'box-shadow:0 2px 8px rgba(75,73,172,.4);">' + initial + '</div></a>'
+          + '<div class="dropdown-menu dropdown-menu-right navbar-dropdown" '
+          + 'style="min-width:230px;border-radius:14px;overflow:hidden;'
+          + 'box-shadow:0 8px 32px rgba(75,73,172,.2);border:1px solid #e4e4f5;padding:0;">'
+          /* Header */
+          + '<div style="background:linear-gradient(135deg,#4B49AC,#7b79d4);padding:1rem;text-align:center;">'
+          + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.22);'
+          + 'display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;'
+          + 'font-size:1.5rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.4);">'
+          + initial + '</div>'
+          + '<p style="margin:0;font-weight:700;color:#fff;font-size:.9rem;">' + (session.name || "") + '</p>'
+          + '<p style="margin:2px 0 6px;color:rgba(255,255,255,.75);font-size:.7rem;">' + session.srcm_id + '</p>'
+          + '<div>' + badges + '</div></div>'
+          /* Access */
+          + '<div style="padding:.5rem .9rem;border-bottom:1px solid #eef;font-size:.76rem;'
+          + 'display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-shield-check-outline" style="color:#4B49AC;"></i>' + access + '</div>'
+          /* Sign Out */
+          + '<a class="dropdown-item" onclick="ts12Logout()" '
+          + 'style="cursor:pointer;color:#d63031;font-size:.82rem;padding:.6rem .9rem;display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-logout" style="font-size:1rem;"></i> Sign Out</a>'
+          + '</div></li>';
+      }
+
+      /* ── 5. Replace Login button with user menu ── */
+      function renderUserMenu() {
+        /* Hide/remove the Login button */
+        var loginLi = document.getElementById("ts12LoginNavItem");
+        if (loginLi) loginLi.remove();
+
+        /* Remove any old user menu */
+        var old = document.getElementById("ts12UserMenu");
+        if (old) old.remove();
+
+        /* Find the right <ul> and append */
+        var ul = document.querySelector(".navbar-menu-wrapper .navbar-nav.ms-auto");
+        if (ul) {
+          ul.insertAdjacentHTML("beforeend", buildUserMenu());
+        }
+      }
+
+      /* ── 6. Hide preceptor-restricted sidebar links ── */
+      function hideSidebarLinks() {
+        if (roleLevel === "full") return;
+        var restricted = ["view-centers.html", "view-subcenters.html", "view-abhyasis.html",
+          "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+        document.querySelectorAll("#sidebar a, .sidebar a").forEach(function (a) {
+          var href = (a.getAttribute("href") || "").split("/").pop().split("?")[0];
+          if (restricted.indexOf(href) !== -1) {
+            var li = a.closest("li");
+            if (li) li.style.display = "none";
+          }
+        });
+        /* Hide empty parent collapse items */
+        document.querySelectorAll("#sidebar .collapse, .sidebar .collapse").forEach(function (col) {
+          var vis = Array.from(col.querySelectorAll("li.nav-item")).filter(function (li) {
+            return li.style.display !== "none";
+          });
+          if (!vis.length && col.querySelectorAll("li.nav-item").length) {
+            var par = col.closest("li.nav-item");
+            if (par) par.style.display = "none";
+          }
+        });
+      }
+
+      /* ── 7. Disable delete buttons for non-ZC/DC ── */
+      var TIP = "Delete is restricted to ZC and DC roles only";
+      function lockDeleteButtons() {
+        if (canDelete) return;
+        function lock(btn) {
+          if (!btn || btn._ts12locked) return;
+          btn._ts12locked = true;
+          btn.disabled = true;
+          btn.title = TIP;
+          btn.style.cssText += ";opacity:0.3!important;cursor:not-allowed!important;pointer-events:none!important;";
+        }
+        document.querySelectorAll(".btn-outline-danger,.row-del,.img-del-btn").forEach(lock);
+        var conf = document.getElementById("confirmDeleteBtn");
+        if (conf) lock(conf);
+        if (!window._ts12NoDel) {
+          window._ts12NoDel = true;
+          var no = function () { alert(TIP); return false; };
+          window.openDeleteModal = no; window.deleteEvent = no;
+          window.removeAbhyasi = no; window.deleteImage = no;
+        }
+      }
+
+      /* ── 8. Globals ── */
+      window.ts12User = session; window.ts12Roles = roles;
+      window.ts12RoleLevel = roleLevel; window.ts12CanDelete = canDelete;
+      window.ts12Logout = function () {
+        localStorage.removeItem("ts12_user");
+        window.location.replace(loginUrl);
+      };
+
+      /* ── 9. Boot ── */
+      function boot() {
+        renderUserMenu();
+        hideSidebarLinks();
+        lockDeleteButtons();
+        setTimeout(lockDeleteButtons, 600);
+        setTimeout(lockDeleteButtons, 1800);
+        var obs = new MutationObserver(lockDeleteButtons);
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        setTimeout(boot, 0);  /* yield to let DOM settle */
+      }
+
+    })();
+
+  </script>
+
+  <script>
+    /* Satsang Attendance Chart */
+    document.addEventListener("DOMContentLoaded", function () {
+      var BASE = "pages/backend";
+      var CI = null;
+      var currentCenter = "";
+      var currentCenterLabel = "All Centers";
+      var currentMonth = "";
+      var currentMonthLabel = "Select Month";
+
+      var centerBtn = document.getElementById("centerDropBtn");
+      var centerMenu = document.getElementById("centerDropMenu");
+      var centerHid = document.getElementById("chartCenterSel");
+      var monthBtn = document.getElementById("monthDropBtn");
+      var monthMenu = document.getElementById("monthDropMenu");
+      var monthHid = document.getElementById("chartMonthSel");
+
+      /* ── Build center dropdown items ── */
+      function loadCenters() {
+        fetch(BASE + "/centers_api.php")
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!centerMenu) return;
+            centerMenu.innerHTML = "";
+            /* All Centers option */
+            var allItem = document.createElement("a");
+            allItem.className = "dropdown-item active";
+            allItem.href = "#";
+            allItem.textContent = "All Centers";
+            allItem.addEventListener("click", function (e) {
+              e.preventDefault();
+              setCenter("", "All Centers");
+              centerMenu.querySelectorAll(".dropdown-item").forEach(function (i) { i.classList.remove("active"); });
+              this.classList.add("active");
+            });
+            centerMenu.appendChild(allItem);
+
+            data.forEach(function (ct) {
+              var item = document.createElement("a");
+              item.className = "dropdown-item";
+              item.href = "#";
+              item.textContent = ct.center_name;
+              item.addEventListener("click", function (e) {
+                e.preventDefault();
+                setCenter(String(ct.center_id), ct.center_name);
+                centerMenu.querySelectorAll(".dropdown-item").forEach(function (i) { i.classList.remove("active"); });
+                this.classList.add("active");
+              });
+              centerMenu.appendChild(item);
+            });
+            loadMonths("");
+          })
+          .catch(function (e) { console.warn("loadCenters:", e); loadMonths(""); });
+      }
+
+      function setCenter(id, label) {
+        currentCenter = id;
+        if (centerHid) centerHid.value = id;
+        var cl = document.getElementById("centerDropLabel"); if (cl) cl.textContent = label;
+        loadMonths(id);
+      }
+
+      /* ── Build month dropdown items ── */
+      function loadMonths(cid) {
+        var url = BASE + "/attendance_api.php?action=months" + (cid ? "&center_id=" + cid : "");
+        fetch(url)
+          .then(function (r) { return r.json(); })
+          .then(function (months) {
+            if (!monthMenu) return;
+            monthMenu.innerHTML = "";
+            if (!months || months.error || months.length === 0) {
+              var noItem = document.createElement("a");
+              noItem.className = "dropdown-item disabled";
+              noItem.textContent = "No data available";
+              monthMenu.appendChild(noItem);
+              var ml2 = document.getElementById("monthDropLabel"); if (ml2) ml2.textContent = "No Data";
+              currentMonth = "";
+              loadChart();
+              return;
+            }
+            months.forEach(function (m, idx) {
+              var item = document.createElement("a");
+              item.className = "dropdown-item" + (idx === 0 ? " active" : "");
+              item.href = "#";
+              item.textContent = m.label;
+              item.addEventListener("click", function (e) {
+                e.preventDefault();
+                setMonth(m.ym, m.label);
+                monthMenu.querySelectorAll(".dropdown-item").forEach(function (i) { i.classList.remove("active"); });
+                this.classList.add("active");
+              });
+              monthMenu.appendChild(item);
+            });
+            /* Auto-select most recent */
+            setMonth(months[0].ym, months[0].label);
+          })
+          .catch(function (e) { console.warn("loadMonths:", e); loadChart(); });
+      }
+
+      function setMonth(ym, label) {
+        currentMonth = ym;
+        if (monthHid) monthHid.value = ym;
+        var ml = document.getElementById("monthDropLabel"); if (ml) ml.textContent = label || "Select Month";
+        loadChart();
+      }
+
+      /* ── Fetch & render ── */
+      function loadChart() {
+        var params = [];
+        if (currentCenter) params.push("center_id=" + currentCenter);
+        if (currentMonth) params.push("month=" + currentMonth);
+        fetch(BASE + "/attendance_api.php?action=chart" + (params.length ? "&" + params.join("&") : ""))
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (!d.error) renderChart(d); else console.warn("Chart API:", d.error); })
+          .catch(function (e) { console.warn("loadChart:", e); });
+      }
+
+      function renderChart(data) {
+        var TM = data.this_month, LM = data.last_month;
+        var thisLabels = TM.sundays.map(function (s) { return s.label; });
+        var lastLabels = LM.sundays.map(function (s) { return s.label; });
+        var allLabels = thisLabels.length >= lastLabels.length ? thisLabels : lastLabels;
+        var tp = TM.sundays.map(function (s) { return s.present; });
+        var lp = LM.sundays.map(function (s) { return s.present; });
+        while (tp.length < allLabels.length) tp.push(null);
+        while (lp.length < allLabels.length) lp.push(null);
+
+        var sub = document.getElementById("attendChartSubtitle");
+        if (sub) sub.textContent = LM.label + " vs " + TM.label;
+
+        var leg = document.getElementById("attendChart-legend");
+        if (leg) leg.innerHTML =
+          "<span style='display:inline-flex;align-items:center;gap:5px;font-size:.78rem;'>" +
+          "<span style='width:10px;height:10px;border-radius:50%;background:#4B49AC;display:inline-block;flex-shrink:0;'></span>" +
+          TM.label + "</span>" +
+          "<span style='display:inline-flex;align-items:center;gap:5px;font-size:.78rem;margin-left:8px;'>" +
+          "<span style='width:10px;height:10px;border-radius:50%;background:#57d2f5;display:inline-block;flex-shrink:0;'></span>" +
+          LM.label + "</span>";
+
+        var cv = document.getElementById("attendanceLineChart");
+        if (!cv) return;
+        var cx = cv.getContext("2d");
+        var gT = cx.createLinearGradient(0, 0, 0, 220);
+        gT.addColorStop(0, "rgba(75,73,172,0.2)"); gT.addColorStop(1, "rgba(75,73,172,0)");
+        var gL = cx.createLinearGradient(0, 0, 0, 220);
+        gL.addColorStop(0, "rgba(87,210,245,0.3)"); gL.addColorStop(1, "rgba(87,210,245,0)");
+
+        if (CI) CI.destroy();
+        CI = new Chart(cv, {
+          type: "line",
+          data: {
+            labels: allLabels, datasets: [
+              {
+                label: TM.label, data: tp, borderColor: "#4B49AC", backgroundColor: gT,
+                borderWidth: 2.5, pointBackgroundColor: "#4B49AC", pointRadius: 5, pointHoverRadius: 7,
+                tension: 0.42, fill: true, spanGaps: true
+              },
+              {
+                label: LM.label, data: lp, borderColor: "#57d2f5", backgroundColor: gL,
+                borderWidth: 2.5, pointBackgroundColor: "#57d2f5", pointRadius: 5, pointHoverRadius: 7,
+                tension: 0.42, fill: true, spanGaps: true
+              }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false }, tooltip: {
+                callbacks: {
+                  title: function (i) { return "Date: " + i[0].label; },
+                  label: function (i) { return " " + i.dataset.label + ": " + (i.parsed.y === null ? "no data" : i.parsed.y + " present"); }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { color: "rgba(0,0,0,0.04)" }, ticks: { color: "#6c757d", font: { size: 11 } } },
+              y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.06)" }, ticks: { color: "#6c757d", font: { size: 11 }, precision: 0 } }
+            }
+          }
+        });
+      }
+
+      loadCenters();
+    });
+  </script>
+
+  <script>
+    /* Individual Sitting Bar Chart */
+    document.addEventListener("DOMContentLoaded", function () {
+      var BASE = "pages/backend";
+      var SI = null;
+      var sittingCenter = "";
+
+      var sBtn = document.getElementById("sittingCenterBtn");
+      var sMenu = document.getElementById("sittingCenterMenu");
+      var sHid = document.getElementById("sittingCenterSel");
+
+      /* ── Load centers into sitting dropdown ── */
+      fetch(BASE + "/centers_api.php")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!sMenu) return;
+          sMenu.innerHTML = "";
+
+          var allA = document.createElement("a");
+          allA.className = "dropdown-item active"; allA.href = "#";
+          allA.textContent = "All Centers";
+          allA.addEventListener("click", function (e) {
+            e.preventDefault();
+            setSittingCenter("", "All Centers");
+            sMenu.querySelectorAll(".dropdown-item").forEach(function (i) { i.classList.remove("active"); });
+            this.classList.add("active");
+          });
+          sMenu.appendChild(allA);
+
+          data.forEach(function (ct) {
+            var a = document.createElement("a");
+            a.className = "dropdown-item"; a.href = "#";
+            a.textContent = ct.center_name;
+            a.addEventListener("click", function (e) {
+              e.preventDefault();
+              setSittingCenter(String(ct.center_id), ct.center_name);
+              sMenu.querySelectorAll(".dropdown-item").forEach(function (i) { i.classList.remove("active"); });
+              this.classList.add("active");
+            });
+            sMenu.appendChild(a);
+          });
+          loadSittingChart();
+        })
+        .catch(function (e) { console.warn("sitting centers:", e); loadSittingChart(); });
+
+      function setSittingCenter(id, label) {
+        sittingCenter = id;
+        if (sHid) sHid.value = id;
+        var lbl = document.getElementById("sittingCenterLabel");
+        if (lbl) lbl.textContent = label;
+        loadSittingChart();
+      }
+
+      /* ── Fetch & render ── */
+      function loadSittingChart() {
+        var url = BASE + "/sitting_api.php?action=chart" + (sittingCenter ? "&center_id=" + sittingCenter : "");
+        fetch(url)
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d.error) { console.warn("Sitting chart:", d.error); return; }
+            renderSittingChart(d);
+          })
+          .catch(function (e) { console.warn("loadSittingChart:", e); });
+      }
+
+      function renderSittingChart(data) {
+        /* Summary row */
+        var tot = document.getElementById("sittingTotal");
+        if (tot) tot.textContent = data.this_year.total.toLocaleString();
+
+        var grow = document.getElementById("sittingGrowth");
+        if (grow) {
+          var g = data.growth;
+          if (g > 0) { grow.textContent = "(+" + g + "%)"; grow.style.color = "#198754"; }
+          else if (g < 0) { grow.textContent = "(" + g + "%)"; grow.style.color = "#dc3545"; }
+          else { grow.textContent = "(0%)"; grow.style.color = "#6c757d"; }
+        }
+
+        var tyLbl = document.getElementById("sittingThisYearLabel");
+        var lyLbl = document.getElementById("sittingLastYearLabel");
+        if (tyLbl) tyLbl.textContent = data.this_year.label;
+        if (lyLbl) lyLbl.textContent = data.last_year.label;
+
+        /* Chart */
+        var cv = document.getElementById("sittingBarChart");
+        if (!cv) return;
+
+        if (SI) SI.destroy();
+        SI = new Chart(cv, {
+          type: "bar",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: data.last_year.label,
+                data: data.last_year.data,
+                backgroundColor: "#57d2f5",
+                borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 },
+                borderSkipped: false,
+                barPercentage: 0.6,
+                categoryPercentage: 0.7,
+                stack: "sitting",
+              },
+              {
+                label: data.this_year.label,
+                data: data.this_year.data,
+                backgroundColor: "#4B49AC",
+                borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+                borderSkipped: false,
+                barPercentage: 0.6,
+                categoryPercentage: 0.7,
+                stack: "sitting",
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (i) { return "  " + i.dataset.label + ": " + i.parsed.y + " sittings"; },
+                  footer: function (items) {
+                    var total = items.reduce(function (s, i) { return s + i.parsed.y; }, 0);
+                    return "Total: " + total + " sittings";
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                grid: { display: false },
+                ticks: { color: "#6c757d", font: { size: 11 } }
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                grid: { color: "rgba(0,0,0,0.05)" },
+                ticks: { color: "#6c757d", font: { size: 11 }, precision: 0 }
+              }
+            }
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+    /* TS-12 Zone Status Summary */
+    document.addEventListener("DOMContentLoaded", function () {
+      var BASE = "pages/backend";
+
+      fetch(BASE + "/attendance_api.php?action=summary")
+        .then(function (r) {
+          var ct = r.headers.get("content-type") || "";
+          if (!ct.includes("application/json")) {
+            return r.text().then(function(t) { throw new Error("PHP error: " + t.substring(0,200)); });
+          }
+          return r.json();
+        })
+        .then(function (d) {
+          if (!d) { console.warn("Summary API: empty response"); return; }
+          if (d.error) { console.warn("Summary API error:", d.error); return; }
+
+          /* ── 1. Top card: year total ── */
+          var yl = document.getElementById("summaryYearLabel");
+          if (yl) yl.textContent = (d.year_label || "") + " Satsang";
+
+          var yp = document.getElementById("summaryYearlyPresent");
+          if (yp) yp.textContent = Number(d.yearly_present || 0).toLocaleString();
+
+          /* ── 2. Sparkline ── */
+          try {
+            var sparkCanvas = document.getElementById("status-summary");
+            if (sparkCanvas && window.Chart) {
+              var spark = d.sparkline || [];
+              var spLabels = spark.map(function (s) { return s.label; });
+              var spVals = spark.map(function (s) { return s.present; });
+              while (spLabels.length < 4) { spLabels.push(""); spVals.push(null); }
+              /* destroy any existing chart on this canvas */
+              var existing = Chart.getChart(sparkCanvas);
+              if (existing) existing.destroy();
+              new Chart(sparkCanvas, {
+                type: "line",
+                data: {
+                  labels: spLabels, datasets: [{
+                    data: spVals, borderColor: "#01B6A0", borderWidth: 2.5,
+                    fill: false, tension: 0.45, pointRadius: 0, spanGaps: true
+                  }]
+                },
+                options: {
+                  responsive: true, maintainAspectRatio: false,
+                  plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                  scales: { x: { display: false }, y: { display: false } }
+                }
+              });
+            }
+          } catch (e2) { console.warn("sparkline err:", e2); }
+
+          /* ── 3. Count labels — set directly, independently ── */
+          var el1 = document.getElementById("summaryYearlyPct");
+          if (el1) el1.textContent = Number(d.yearly_present || 0).toLocaleString();
+
+          var el2 = document.getElementById("summaryMonthLabel");
+          if (el2) el2.textContent = d.month_label || "This Month";
+
+          var el3 = document.getElementById("summaryMonthlyPresent");
+          if (el3) el3.textContent = Number(d.monthly_present || 0).toLocaleString();
+
+          /* ── 4. ProgressBar circles ── */
+          try {
+            if (window.ProgressBar) {
+              function makeCircle(elId, fromColor, pct) {
+                var el = document.getElementById(elId);
+                if (!el) return;
+                el.innerHTML = "";
+                var bar = new ProgressBar.Circle(el, {
+                  strokeWidth: 15, trailWidth: 15,
+                  easing: "easeInOut", duration: 1400,
+                  text: { autoStyleContainer: false },
+                  from: { color: fromColor, width: 15 },
+                  to: { color: "#677ae4", width: 15 },
+                  step: function (state, circle) {
+                    circle.path.setAttribute("stroke", state.color);
+                    circle.path.setAttribute("stroke-width", state.width);
+                    circle.setText("");
+                  }
+                });
+                bar.text.style.fontSize = "0rem";
+                bar.animate(Math.min(Math.max(Number(pct) || 0.05, 0.05), 1));
+              }
+              makeCircle("totalVisitors", "#52CDFF", d.yearly_pct);
+              makeCircle("visitperday", "#34B1AA", d.monthly_pct);
+            }
+          } catch (e3) { console.warn("progressbar err:", e3); }
+        })
+        .catch(function (e) { console.warn("loadSummary fetch error:", e); });
+    });
+  </script>
+
+  <script>
+    /* Zone Activities Donut Chart */
+    document.addEventListener("DOMContentLoaded", function () {
+      var BASE = "pages/backend";
+
+      /* ── helper: show error inside the card ── */
+      function showActError(msg) {
+        var leg = document.getElementById("activitiesLegend");
+        if (leg) leg.innerHTML = '<div style="color:#dc3545;font-size:.8rem;padding:8px;background:#fff2f0;border-radius:6px;word-break:break-all;"><b>⚠ Activities API error:</b><br>' + msg + '</div>';
+        var yl = document.getElementById("actYearLabel"); if (yl) yl.textContent = "Error";
+        var tot = document.getElementById("actTotal");    if (tot) tot.textContent = "!";
+      }
+
+      fetch(BASE + "/attendance_api.php?action=activities")
+        .then(function (r) {
+          var ct = r.headers.get("content-type") || "";
+          if (!ct.includes("application/json")) {
+            return r.text().then(function(t) {
+              var match = t.match(/<b>([^<]+)/);
+              throw new Error(match ? match[1] : "HTTP " + r.status + " — non-JSON response. Is attendance_api.php returning valid JSON? Check the debug URL.");
+            });
+          }
+          return r.json();
+        })
+        .then(function (d) {
+          if (!d) { showActError("Empty response from attendance_api.php?action=activities"); return; }
+          if (d.error) { showActError(d.error); return; }
+
+          /* Year label + total */
+          var yl = document.getElementById("actYearLabel");
+          if (yl) yl.textContent = d.year + " Activities";
+
+          var tot = document.getElementById("actTotal");
+          if (tot) tot.textContent = Number(d.total || 0).toLocaleString();
+
+          /* Chart data - 3 slices */
+          var labels = ["Sunday Satsang", "Individual Sitting", "Events"];
+          var values = [d.satsang, d.sitting, d.events];
+          var colors = ["#4B49AC", "#57d2f5", "#f0a500"];
+          var hovers = ["#3d3c8e", "#3dbfe0", "#d4920a"];
+          var avgs = [d.satsang_avg, d.sitting_avg, d.events_avg];
+          var counts = [
+            d.satsang_dates + " Sundays",
+            d.sitting_dates + " dates",
+            d.event_count + " events"
+          ];
+
+          var cv = document.getElementById("activitiesDonut");
+          if (!cv || !window.Chart) return;
+
+          var existing = Chart.getChart(cv);
+          if (existing) existing.destroy();
+
+          new Chart(cv, {
+            type: "doughnut",
+            data: {
+              labels: labels,
+              datasets: [{
+                data: values,
+                backgroundColor: colors,
+                hoverBackgroundColor: hovers,
+                borderWidth: 3,
+                borderColor: "#fff",
+                hoverOffset: 8,
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "62%",
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: function (i) {
+                      var val = i.parsed;
+                      var total = i.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                      var pct = total > 0 ? Math.round(val / total * 100) : 0;
+                      return "  " + i.label + ": " + Number(val).toLocaleString() + "  (" + pct + "%)";
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          /* Custom legend with avg */
+          var leg = document.getElementById("activitiesLegend");
+          if (leg) {
+            leg.innerHTML = "";
+            var total = values.reduce(function (a, b) { return a + b; }, 0);
+            labels.forEach(function (lbl, i) {
+              var pct = total > 0 ? Math.round(values[i] / total * 100) : 0;
+              var item = document.createElement("div");
+              item.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:3px;min-width:120px;padding:8px 12px;border-radius:10px;background:#f8f9fa;";
+              item.innerHTML =
+                "<div style='display:inline-flex;align-items:center;gap:6px;'>" +
+                "<span style='width:12px;height:12px;border-radius:50%;background:" + colors[i] + ";display:inline-block;flex-shrink:0;'></span>" +
+                "<span style='font-size:.8rem;color:#6c757d;font-weight:600;'>" + lbl + "</span>" +
+                "</div>" +
+                "<span style='font-size:1.15rem;font-weight:800;color:#1a1a2e;line-height:1.2;'>" + Number(values[i]).toLocaleString() + "</span>" +
+                "<div style='display:flex;gap:8px;align-items:center;'>" +
+                "<span style='font-size:.72rem;color:#aaa;'>(" + pct + "%)</span>" +
+                "<span style='font-size:.72rem;background:" + colors[i] + "22;color:" + colors[i] + ";border-radius:8px;padding:1px 7px;font-weight:700;'>avg " + avgs[i] + "</span>" +
+                "</div>" +
+                "<span style='font-size:.68rem;color:#bbb;'>" + counts[i] + "</span>";
+              leg.appendChild(item);
+            });
+          }
+        })
+        .catch(function (e) { showActError(e.message || String(e)); });
+    });
+  </script>
+
+  <script>
+    /* Preceptor Sittings Table */
+    document.addEventListener("DOMContentLoaded", function () {
+      var BASE = "pages/backend";
+
+      fetch(BASE + "/sitting_api.php?action=preceptors")
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || d.error) { console.warn("Preceptors API:", d); return; }
+
+          var sub = document.getElementById("preceptorSubtitle");
+          if (sub) sub.textContent = "Individual sitting summary — " + d.year;
+
+          var tot = document.getElementById("preceptorTotal");
+          if (tot) tot.textContent = Number(d.total || 0).toLocaleString();
+
+          var tbody = document.getElementById("preceptorTbody");
+          if (!tbody) return;
+
+          if (!d.preceptors || d.preceptors.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No sitting data for this year</td></tr>';
+            return;
+          }
+
+          /* Progress bar color based on share % */
+          function barColor(pct) {
+            if (pct >= 70) return "bg-success";
+            if (pct >= 40) return "bg-warning";
+            return "bg-danger";
+          }
+
+          /* Share badge color */
+          function badgeClass(share) {
+            if (share >= 20) return "badge-opacity-success";
+            if (share >= 10) return "badge-opacity-warning";
+            return "badge-opacity-danger";
+          }
+
+          tbody.innerHTML = "";
+          d.preceptors.forEach(function (p, idx) {
+            var color = barColor(p.pct);
+            var badge = badgeClass(p.share);
+            var initials = p.preceptor_name.split(" ").map(function (w) { return w[0]; }).join("").substring(0, 2).toUpperCase();
+            var avatarColors = ["#4B49AC", "#57d2f5", "#f0a500", "#01B6A0", "#f96868", "#46c35f", "#8862e0", "#fbbc06", "#e91e63", "#00bcd4"];
+            var avatarBg = avatarColors[idx % avatarColors.length];
+
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+              '<td><span class="text-muted fw-semibold" style="font-size:.85rem;">' + (idx + 1) + '</span></td>' +
+              '<td>' +
+              '<div class="d-flex align-items-center gap-2">' +
+              '<div style="width:38px;height:38px;border-radius:10px;background:' + avatarBg + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+              '<span style="color:#fff;font-weight:700;font-size:.8rem;">' + initials + '</span>' +
+              '</div>' +
+              '<div>' +
+              '<h6 class="mb-0" style="font-size:.88rem;">' + p.preceptor_name + '</h6>' +
+              '<p class="mb-0 text-muted" style="font-size:.75rem;">Preceptor</p>' +
+              '</div>' +
+              '</div>' +
+              '</td>' +
+              '<td>' +
+              '<h6 class="mb-0" style="font-size:.88rem;">' + p.unique_abhyasis + ' abhyasis</h6>' +
+              '<p class="mb-0 text-muted" style="font-size:.75rem;">' + p.total_sittings + ' sittings</p>' +
+              '</td>' +
+              '<td style="min-width:180px;">' +
+              '<div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">' +
+              '<p class="text-success mb-0" style="font-size:.78rem;">' + p.pct + '%</p>' +
+              '<p class="mb-0 text-muted" style="font-size:.78rem;">' + p.total_sittings + ' / ' + d.total + '</p>' +
+              '</div>' +
+              '<div class="progress progress-md">' +
+              '<div class="progress-bar ' + color + '" role="progressbar" style="width:' + p.pct + '%" aria-valuenow="' + p.pct + '" aria-valuemin="0" aria-valuemax="100"></div>' +
+              '</div>' +
+              '</td>' +
+              '<td><span style="font-size:.82rem;color:#555;">' + p.last_sitting + '</span></td>' +
+              '<td><div class="badge ' + badge + '">' + p.share + '%</div></td>';
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(function (e) { console.warn("Preceptors table:", e); });
+    });
+  </script>
+  <!-- ═══════════════════════════════════════════════════════════════
+       PDF EXPORT  —  4 reports
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    "use strict";
+
+    var REPORT_BASE = "pages/backend";
+    var BRAND       = [75, 73, 172];       // #4B49AC
+    var BRAND_LIGHT = [240, 238, 255];
+    var GRAY        = [100, 100, 120];
+    var ORG         = "TS-12 Zone";
+
+    /* ── toast notification ─────────────────────────────────────── */
+    function toast(msg, type) {
+      var t = document.createElement("div");
+      t.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;"
+        + "padding:10px 20px;border-radius:10px;font-size:.85rem;font-weight:600;"
+        + "color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18);"
+        + "background:" + (type === "err" ? "#dc3545" : type === "ok" ? "#28a745" : "#4B49AC") + ";";
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.remove(); }, 3500);
+    }
+
+    /* ── shared PDF helpers ──────────────────────────────────────── */
+    function addHeader(doc, title, subtitle) {
+      var pw = doc.internal.pageSize.getWidth();
+      // Brand bar
+      doc.setFillColor.apply(doc, BRAND);
+      doc.rect(0, 0, pw, 18, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13); doc.setFont(undefined, "bold");
+      doc.text(ORG + "  —  " + title, 14, 12);
+      // Subtitle + date
+      doc.setFontSize(8); doc.setFont(undefined, "normal");
+      var dt = new Date().toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+      doc.text((subtitle || ""), 14, 17.5);
+      doc.text("Generated: " + dt, pw - 14, 17.5, {align:"right"});
+      doc.setTextColor(0, 0, 0);
+    }
+
+    function addFooter(doc) {
+      var pw  = doc.internal.pageSize.getWidth();
+      var ph  = doc.internal.pageSize.getHeight();
+      var n   = doc.internal.getNumberOfPages();
+      for (var i = 1; i <= n; i++) {
+        doc.setPage(i);
+        doc.setDrawColor(220, 220, 230);
+        doc.line(14, ph - 10, pw - 14, ph - 10);
+        doc.setFontSize(7.5); doc.setTextColor.apply(doc, GRAY);
+        doc.text(ORG + " Attendance System", 14, ph - 5);
+        doc.text("Page " + i + " of " + n, pw - 14, ph - 5, {align:"right"});
+      }
+      doc.setTextColor(0, 0, 0);
+    }
+
+    function fetchJSON(url) {
+      return fetch(url).then(function (r) {
+        var ct = r.headers.get("content-type") || "";
+        if (!ct.includes("application/json"))
+          return r.text().then(function (t) { throw new Error("Server error: " + t.substring(0, 120)); });
+        return r.json();
+      }).then(function (d) {
+        if (d && d.error) throw new Error(d.error);
+        return d;
+      });
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       REPORT 1  —  Dashboard Summary (html2canvas snapshot)
+       ════════════════════════════════════════════════════════════════ */
+    window.exportDashboardPDF = function () {
+      toast("Capturing dashboard…");
+      var rows = ["dashRow1", "dashRow2", "dashRow3"].map(function (id) {
+        return document.getElementById(id);
+      }).filter(Boolean);
+
+      if (!rows.length) { toast("Dashboard rows not found", "err"); return; }
+
+      var { jsPDF } = window.jspdf;
+      var doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      var pw  = doc.internal.pageSize.getWidth();
+      var ph  = doc.internal.pageSize.getHeight();
+
+      addHeader(doc, "Dashboard Summary",
+        "Satsang Attendance · Zone Status · Individual Sitting · Zone Activities · Preceptor Sittings");
+
+      // Capture rows sequentially
+      var cursor = 24;
+      var margin = 10;
+      var usableW = pw - margin * 2;
+
+      function captureNext(idx) {
+        if (idx >= rows.length) {
+          addFooter(doc);
+          var yr = new Date().getFullYear();
+          doc.save("TS12_Dashboard_" + yr + ".pdf");
+          toast("Dashboard PDF downloaded!", "ok");
+          return;
+        }
+        html2canvas(rows[idx], { scale: 2, useCORS: true, logging: false,
+                                  backgroundColor: "#ffffff" }).then(function (canvas) {
+          var imgData = canvas.toDataURL("image/png");
+          var imgH = (canvas.height / canvas.width) * usableW;
+          if (cursor + imgH > ph - 15) {
+            doc.addPage();
+            addHeader(doc, "Dashboard Summary (cont.)", "");
+            cursor = 24;
+          }
+          doc.addImage(imgData, "PNG", margin, cursor, usableW, imgH);
+          cursor += imgH + 6;
+          captureNext(idx + 1);
+        }).catch(function (e) {
+          toast("Capture error: " + e.message, "err");
+        });
+      }
+      captureNext(0);
+    };
+
+    /* ════════════════════════════════════════════════════════════════
+       REPORT 2  —  Sunday Satsang: Center × Month
+       ════════════════════════════════════════════════════════════════ */
+    window.exportSatsangReport = function () {
+      toast("Loading Satsang report…");
+      fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-satsang")
+        .then(function (data) {
+          if (!data.length) { toast("No satsang data found for this year", "err"); return; }
+
+          var { jsPDF } = window.jspdf;
+          var doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+          var yr  = new Date().getFullYear();
+
+          addHeader(doc, "Sunday Satsang Count Report",
+            "Center-wise attendance — Jan " + yr + " to " + new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}));
+
+          // Group by center
+          var centers = {};
+          data.forEach(function (r) {
+            var cn = r.center_name || "Unknown";
+            if (!centers[cn]) centers[cn] = [];
+            centers[cn].push(r);
+          });
+
+          var body = [];
+          Object.keys(centers).sort().forEach(function (cn) {
+            var rows = centers[cn];
+            var total = rows.reduce(function (s, r) { return s + parseInt(r.attend_count || 0); }, 0);
+            rows.forEach(function (r, i) {
+              body.push([
+                i === 0 ? cn : "",
+                r.month_name,
+                { content: parseInt(r.attend_count || 0).toLocaleString(), styles: { halign: "right" } }
+              ]);
+            });
+            // Center subtotal
+            body.push([
+              { content: "", styles: {} },
+              { content: "Subtotal", styles: { fontStyle: "bold", textColor: BRAND } },
+              { content: total.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: BRAND } }
+            ]);
+            body.push([{ content: "", colSpan: 3, styles: { cellPadding: 1 } }]);
+          });
+
+          doc.autoTable({
+            startY: 24,
+            head: [["Center", "Month", "Attendance Count"]],
+            body: body,
+            theme: "grid",
+            headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+            columnStyles: {
+              0: { cellWidth: 65, fontStyle: "bold" },
+              1: { cellWidth: 55 },
+              2: { cellWidth: 40, halign: "right" }
+            },
+            bodyStyles: { fontSize: 8.5 },
+            alternateRowStyles: { fillColor: BRAND_LIGHT },
+            margin: { left: 14, right: 14 },
+            didDrawPage: function (d) {
+              if (d.pageNumber > 1) addHeader(doc, "Sunday Satsang Count Report (cont.)", "");
+            }
+          });
+
+          addFooter(doc);
+          doc.save("TS12_Satsang_Report_" + yr + ".pdf");
+          toast("Satsang Report downloaded!", "ok");
+        })
+        .catch(function (e) { toast("Error: " + e.message, "err"); });
+    };
+
+    /* ════════════════════════════════════════════════════════════════
+       REPORT 3  —  Sitting: Center × Preceptor × Month
+       ════════════════════════════════════════════════════════════════ */
+    window.exportSittingReport = function () {
+      toast("Loading Sitting report…");
+      fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-sitting")
+        .then(function (data) {
+          if (!data.length) { toast("No sitting data found for this year", "err"); return; }
+
+          var { jsPDF } = window.jspdf;
+          var doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+          var yr  = new Date().getFullYear();
+
+          addHeader(doc, "Individual Sitting Count Report",
+            "Center · Preceptor · Month — Jan " + yr + " to " + new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}));
+
+          // Group: center → preceptor → rows
+          var centers = {};
+          data.forEach(function (r) {
+            var cn = r.center_name  || "Unknown";
+            var pn = r.preceptor_name || "Unknown";
+            if (!centers[cn]) centers[cn] = {};
+            if (!centers[cn][pn]) centers[cn][pn] = [];
+            centers[cn][pn].push(r);
+          });
+
+          var body = [];
+          Object.keys(centers).sort().forEach(function (cn) {
+            var preceptors = centers[cn];
+            var centerTotal = 0;
+            var centerFirstRow = true;
+
+            Object.keys(preceptors).sort().forEach(function (pn) {
+              var rows = preceptors[pn];
+              var preTotal = rows.reduce(function (s, r) { return s + parseInt(r.sitting_count || 0); }, 0);
+              centerTotal += preTotal;
+
+              rows.forEach(function (r, i) {
+                body.push([
+                  centerFirstRow && i === 0 ? cn : "",
+                  i === 0 ? pn : "",
+                  r.month_name,
+                  { content: parseInt(r.sitting_count || 0).toLocaleString(), styles: { halign: "right" } }
+                ]);
+                centerFirstRow = false;
+              });
+              // Preceptor subtotal
+              body.push([
+                "",
+                { content: "", styles: {} },
+                { content: "Preceptor Total", styles: { fontStyle: "italic", textColor: [0,128,90] } },
+                { content: preTotal.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: [0,128,90] } }
+              ]);
+            });
+            // Center subtotal
+            body.push([
+              { content: cn + " Total", colSpan: 3, styles: { fontStyle: "bold", textColor: BRAND, fillColor: BRAND_LIGHT } },
+              { content: centerTotal.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: BRAND, fillColor: BRAND_LIGHT } }
+            ]);
+            body.push([{ content: "", colSpan: 4, styles: { cellPadding: 1 } }]);
+          });
+
+          doc.autoTable({
+            startY: 24,
+            head: [["Center", "Preceptor", "Month", "Sitting Count"]],
+            body: body,
+            theme: "grid",
+            headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+            columnStyles: {
+              0: { cellWidth: 45, fontStyle: "bold" },
+              1: { cellWidth: 50 },
+              2: { cellWidth: 45 },
+              3: { cellWidth: 30, halign: "right" }
+            },
+            bodyStyles: { fontSize: 8 },
+            alternateRowStyles: { fillColor: BRAND_LIGHT },
+            margin: { left: 14, right: 14 },
+            didDrawPage: function (d) {
+              if (d.pageNumber > 1) addHeader(doc, "Sitting Count Report (cont.)", "");
+            }
+          });
+
+          addFooter(doc);
+          doc.save("TS12_Sitting_Report_" + yr + ".pdf");
+          toast("Sitting Report downloaded!", "ok");
+        })
+        .catch(function (e) { toast("Error: " + e.message, "err"); });
+    };
+
+    /* ════════════════════════════════════════════════════════════════
+       REPORT 4  —  Events Full Report
+       ════════════════════════════════════════════════════════════════ */
+    window.exportEventsReport = function () {
+      toast("Loading Events report…");
+      fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-events")
+        .then(function (data) {
+          if (!data.length) { toast("No event data found for this year", "err"); return; }
+
+          var { jsPDF } = window.jspdf;
+          var doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+          var yr  = new Date().getFullYear();
+
+          addHeader(doc, "Events Report",
+            "Jan " + yr + " to " + new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}));
+
+          var body = data.map(function (r) {
+            return [
+              r.event_name || "",
+              r.event_date || "",
+              r.location   || "",
+              r.district   || "",
+              { content: (parseInt(r.registered_member || 0)).toLocaleString(), styles: { halign: "right" } },
+              { content: (parseInt(r.attendant_abhyasis || 0)).toLocaleString(), styles: { halign: "right" } }
+            ];
+          });
+
+          // Grand totals row
+          var totReg  = data.reduce(function (s, r) { return s + parseInt(r.registered_member  || 0); }, 0);
+          var totAtt  = data.reduce(function (s, r) { return s + parseInt(r.attendant_abhyasis  || 0); }, 0);
+          body.push([
+            { content: "TOTAL  (" + data.length + " events)", colSpan: 4,
+              styles: { fontStyle: "bold", fillColor: BRAND, textColor: 255 } },
+            { content: totReg.toLocaleString(),
+              styles: { fontStyle: "bold", halign: "right", fillColor: BRAND, textColor: 255 } },
+            { content: totAtt.toLocaleString(),
+              styles: { fontStyle: "bold", halign: "right", fillColor: BRAND, textColor: 255 } }
+          ]);
+
+          doc.autoTable({
+            startY: 24,
+            head: [["Event Name", "Event Date", "Location", "District", "Registered Members", "Attendant Abhyasis"]],
+            body: body,
+            theme: "grid",
+            headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+            columnStyles: {
+              0: { cellWidth: 60 },
+              1: { cellWidth: 28 },
+              2: { cellWidth: 45 },
+              3: { cellWidth: 35 },
+              4: { cellWidth: 38, halign: "right" },
+              5: { cellWidth: 38, halign: "right" }
+            },
+            bodyStyles: { fontSize: 8.5 },
+            alternateRowStyles: { fillColor: BRAND_LIGHT },
+            margin: { left: 14, right: 14 },
+            didDrawPage: function (d) {
+              if (d.pageNumber > 1) addHeader(doc, "Events Report (cont.)", "");
+            }
+          });
+
+          addFooter(doc);
+          doc.save("TS12_Events_Report_" + yr + ".pdf");
+          toast("Events Report downloaded!", "ok");
+        })
+        .catch(function (e) { toast("Error: " + e.message, "err"); });
+    };
+
+    /* ════════════════════════════════════════════════════════════════
+       ALL REPORTS  —  Combined single PDF
+       Sections: Dashboard snapshot → Satsang → Sitting → Events
+       ════════════════════════════════════════════════════════════════ */
+    window.exportAllReports = function () {
+      toast("Building full report — this may take a moment…");
+
+      var { jsPDF } = window.jspdf;
+      var yr    = new Date().getFullYear();
+      var today = new Date().toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+      var doc   = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      var pw    = doc.internal.pageSize.getWidth();
+      var ph    = doc.internal.pageSize.getHeight();
+
+      /* ── Cover page ─────────────────────────────────────────────── */
+      doc.setFillColor.apply(doc, BRAND);
+      doc.rect(0, 0, pw, ph, "F");
+
+      // Logo circle
+      doc.setFillColor(255, 255, 255);
+      doc.circle(pw / 2, 60, 22, "F");
+      doc.setTextColor.apply(doc, BRAND);
+      doc.setFontSize(22); doc.setFont(undefined, "bold");
+      doc.text("TS12", pw / 2, 64, { align: "center" });
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22); doc.setFont(undefined, "bold");
+      doc.text("TS-12 Zone", pw / 2, 100, { align: "center" });
+      doc.setFontSize(16); doc.setFont(undefined, "normal");
+      doc.text("Attendance System", pw / 2, 110, { align: "center" });
+
+      doc.setFontSize(13); doc.setFont(undefined, "bold");
+      doc.text("Annual Zone Report — " + yr, pw / 2, 135, { align: "center" });
+
+      // Divider
+      doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.4);
+      doc.line(pw * 0.2, 143, pw * 0.8, 143);
+
+      doc.setFontSize(9); doc.setFont(undefined, "normal");
+      var sections = [
+        "1.  Dashboard Summary",
+        "2.  Sunday Satsang — Center × Month",
+        "3.  Individual Sitting — Center × Preceptor × Month",
+        "4.  Events — Full Report"
+      ];
+      sections.forEach(function (s, i) {
+        doc.text(s, pw / 2, 155 + i * 9, { align: "center" });
+      });
+
+      doc.setFontSize(8);
+      doc.text("Generated: " + today, pw / 2, ph - 20, { align: "center" });
+      doc.text("Heartfulness Zone · TS-12", pw / 2, ph - 14, { align: "center" });
+
+      // ── helpers reused inside ──────────────────────────────────────
+      function newSection(titleText, subtitleText, landscape) {
+        doc.addPage(landscape ? "l" : "p");
+        var spw = doc.internal.pageSize.getWidth();
+        doc.setFillColor.apply(doc, BRAND);
+        doc.rect(0, 0, spw, 18, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(13); doc.setFont(undefined, "bold");
+        doc.text(ORG + "  —  " + titleText, 14, 12);
+        doc.setFontSize(8); doc.setFont(undefined, "normal");
+        doc.text(subtitleText || "", 14, 17.5);
+        doc.text("Generated: " + today, spw - 14, 17.5, { align: "right" });
+        doc.setTextColor(0, 0, 0);
+        return 24; // startY
+      }
+
+      // ── SECTION 1: Dashboard snapshot ─────────────────────────────
+      var rows = ["dashRow1", "dashRow2", "dashRow3"].map(function (id) {
+        return document.getElementById(id);
+      }).filter(Boolean);
+
+      function captureDashboard(cb) {
+        var cursor = newSection("Dashboard Summary",
+          "Satsang Attendance · Zone Status · Individual Sitting · Zone Activities · Preceptor Sittings");
+        var margin = 10;
+        var usableW = pw - margin * 2;
+
+        function captureNext(idx) {
+          if (idx >= rows.length) { cb(); return; }
+          html2canvas(rows[idx], { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" })
+            .then(function (canvas) {
+              var imgH = (canvas.height / canvas.width) * usableW;
+              if (cursor + imgH > ph - 15) {
+                doc.addPage();
+                newSection("Dashboard Summary (cont.)", "");
+                cursor = 24;
+              }
+              doc.addImage(canvas.toDataURL("image/png"), "PNG", margin, cursor, usableW, imgH);
+              cursor += imgH + 5;
+              captureNext(idx + 1);
+            }).catch(function () { captureNext(idx + 1); });
+        }
+        captureNext(0);
+      }
+
+      // ── SECTION 2: Satsang ────────────────────────────────────────
+      function buildSatsang(data) {
+        if (!data || !data.length) return;
+        var startY = newSection("Sunday Satsang Count Report",
+          "Center-wise attendance — Jan " + yr + " to " + today);
+        var centers = {};
+        data.forEach(function (r) {
+          var cn = r.center_name || "Unknown";
+          if (!centers[cn]) centers[cn] = [];
+          centers[cn].push(r);
+        });
+        var body = [];
+        Object.keys(centers).sort().forEach(function (cn) {
+          var rows2 = centers[cn];
+          var total = rows2.reduce(function (s, r) { return s + parseInt(r.attend_count || 0); }, 0);
+          rows2.forEach(function (r, i) {
+            body.push([i === 0 ? cn : "", r.month_name,
+              { content: parseInt(r.attend_count || 0).toLocaleString(), styles: { halign: "right" } }]);
+          });
+          body.push(["",
+            { content: "Subtotal", styles: { fontStyle: "bold", textColor: BRAND } },
+            { content: total.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: BRAND } }]);
+          body.push([{ content: "", colSpan: 3, styles: { cellPadding: 1 } }]);
+        });
+        doc.autoTable({
+          startY: startY, head: [["Center", "Month", "Attendance Count"]], body: body,
+          theme: "grid",
+          headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+          columnStyles: { 0: { cellWidth: 65, fontStyle: "bold" }, 1: { cellWidth: 55 }, 2: { cellWidth: 40, halign: "right" } },
+          bodyStyles: { fontSize: 8.5 }, alternateRowStyles: { fillColor: BRAND_LIGHT },
+          margin: { left: 14, right: 14 },
+          didDrawPage: function (d) { if (d.pageNumber > 1) newSection("Sunday Satsang (cont.)", ""); }
+        });
+      }
+
+      // ── SECTION 3: Sitting ────────────────────────────────────────
+      function buildSitting(data) {
+        if (!data || !data.length) return;
+        var startY = newSection("Individual Sitting Count Report",
+          "Center · Preceptor · Month — Jan " + yr + " to " + today);
+        var centers = {};
+        data.forEach(function (r) {
+          var cn = r.center_name || "Unknown";
+          var pn = r.preceptor_name || "Unknown";
+          if (!centers[cn]) centers[cn] = {};
+          if (!centers[cn][pn]) centers[cn][pn] = [];
+          centers[cn][pn].push(r);
+        });
+        var body = [];
+        Object.keys(centers).sort().forEach(function (cn) {
+          var preceptors = centers[cn];
+          var centerTotal = 0;
+          var centerFirstRow = true;
+          Object.keys(preceptors).sort().forEach(function (pn) {
+            var rows2 = preceptors[pn];
+            var preTotal = rows2.reduce(function (s, r) { return s + parseInt(r.sitting_count || 0); }, 0);
+            centerTotal += preTotal;
+            rows2.forEach(function (r, i) {
+              body.push([centerFirstRow && i === 0 ? cn : "", i === 0 ? pn : "", r.month_name,
+                { content: parseInt(r.sitting_count || 0).toLocaleString(), styles: { halign: "right" } }]);
+              centerFirstRow = false;
+            });
+            body.push(["", "",
+              { content: "Preceptor Total", styles: { fontStyle: "italic", textColor: [0,128,90] } },
+              { content: preTotal.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: [0,128,90] } }]);
+          });
+          body.push([
+            { content: cn + " Total", colSpan: 3, styles: { fontStyle: "bold", textColor: BRAND, fillColor: BRAND_LIGHT } },
+            { content: centerTotal.toLocaleString(), styles: { fontStyle: "bold", halign: "right", textColor: BRAND, fillColor: BRAND_LIGHT } }
+          ]);
+          body.push([{ content: "", colSpan: 4, styles: { cellPadding: 1 } }]);
+        });
+        doc.autoTable({
+          startY: startY, head: [["Center", "Preceptor", "Month", "Sitting Count"]], body: body,
+          theme: "grid",
+          headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+          columnStyles: { 0: { cellWidth: 45, fontStyle: "bold" }, 1: { cellWidth: 50 }, 2: { cellWidth: 45 }, 3: { cellWidth: 30, halign: "right" } },
+          bodyStyles: { fontSize: 8 }, alternateRowStyles: { fillColor: BRAND_LIGHT },
+          margin: { left: 14, right: 14 },
+          didDrawPage: function (d) { if (d.pageNumber > 1) newSection("Sitting Count (cont.)", ""); }
+        });
+      }
+
+      // ── SECTION 4: Events ─────────────────────────────────────────
+      function buildEvents(data) {
+        if (!data || !data.length) return;
+        // Events uses landscape — add a landscape page manually
+        doc.addPage([297, 210]); // A4 landscape dimensions in portrait mode
+        var lpw = doc.internal.pageSize.getWidth();
+        doc.setFillColor.apply(doc, BRAND);
+        doc.rect(0, 0, lpw, 18, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(13); doc.setFont(undefined, "bold");
+        doc.text(ORG + "  —  Events Report", 14, 12);
+        doc.setFontSize(8); doc.setFont(undefined, "normal");
+        doc.text("Jan " + yr + " to " + today, 14, 17.5);
+        doc.text("Generated: " + today, lpw - 14, 17.5, { align: "right" });
+        doc.setTextColor(0, 0, 0);
+
+        var body = data.map(function (r) {
+          return [r.event_name || "", r.event_date || "", r.location || "", r.district || "",
+            { content: parseInt(r.registered_member || 0).toLocaleString(), styles: { halign: "right" } },
+            { content: parseInt(r.attendant_abhyasis || 0).toLocaleString(), styles: { halign: "right" } }];
+        });
+        var totReg = data.reduce(function (s, r) { return s + parseInt(r.registered_member || 0); }, 0);
+        var totAtt = data.reduce(function (s, r) { return s + parseInt(r.attendant_abhyasis || 0); }, 0);
+        body.push([
+          { content: "TOTAL  (" + data.length + " events)", colSpan: 4, styles: { fontStyle: "bold", fillColor: BRAND, textColor: 255 } },
+          { content: totReg.toLocaleString(), styles: { fontStyle: "bold", halign: "right", fillColor: BRAND, textColor: 255 } },
+          { content: totAtt.toLocaleString(), styles: { fontStyle: "bold", halign: "right", fillColor: BRAND, textColor: 255 } }
+        ]);
+        doc.autoTable({
+          startY: 24, head: [["Event Name", "Event Date", "Location", "District", "Registered Members", "Attendant Abhyasis"]], body: body,
+          theme: "grid",
+          headStyles: { fillColor: BRAND, textColor: 255, fontStyle: "bold", fontSize: 9 },
+          columnStyles: { 0: { cellWidth: 60 }, 1: { cellWidth: 28 }, 2: { cellWidth: 45 }, 3: { cellWidth: 35 }, 4: { cellWidth: 38, halign: "right" }, 5: { cellWidth: 38, halign: "right" } },
+          bodyStyles: { fontSize: 8.5 }, alternateRowStyles: { fillColor: BRAND_LIGHT },
+          margin: { left: 14, right: 14 }
+        });
+      }
+
+      // ── Orchestrate: fetch all data then build ─────────────────────
+      Promise.all([
+        fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-satsang").catch(function () { return []; }),
+        fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-sitting").catch(function () { return []; }),
+        fetchJSON(REPORT_BASE + "/reports_api.php?action=pdf-events").catch(function () { return []; })
+      ]).then(function (results) {
+        var satsangData  = results[0];
+        var sittingData  = results[1];
+        var eventsData   = results[2];
+
+        // Build sections 2–4 first (data-driven, no async)
+        buildSatsang(satsangData);
+        buildSitting(sittingData);
+        buildEvents(eventsData);
+
+        // Section 1: dashboard snapshot (async) — reorder pages after
+        captureDashboard(function () {
+          // Move dashboard pages (currently at end) to front after cover
+          // Simpler: just add footer to all pages and save
+          addFooter(doc);
+          doc.save("TS12_Full_Zone_Report_" + yr + ".pdf");
+          toast("Full Zone Report downloaded!", "ok");
+        });
+      }).catch(function (e) {
+        toast("Error building report: " + e.message, "err");
+      });
+    };
+
+  })();
+  </script>
+
+
+
+
+  <!-- ── TS12 Mobile Sidebar & SD Backdrop ───────────────────── -->
+  <script>
+  (function () {
+    var sidebar  = document.getElementById('sidebar');
+    var toggler  = document.querySelector('.navbar-toggler-right[data-bs-toggle="offcanvas"]');
+    if (!sidebar) return;
+
+    /* ── Sidebar open / close ─────────────────────────────────── */
+    function openSidebar() {
+      sidebar.classList.add('ts12-open');
+      document.body.classList.add('ts12-sidebar-open');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('ts12-open');
+      document.body.classList.remove('ts12-sidebar-open');
+    }
+    if (toggler) {
+      toggler.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sidebar.classList.contains('ts12-open') ? closeSidebar() : openSidebar();
+      });
+    }
+    // Close on backdrop click
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('ts12-open') &&
+          !sidebar.contains(e.target) &&
+          (!toggler || !toggler.contains(e.target))) {
+        closeSidebar();
+      }
+    });
+    // Close on nav link click (page navigation on mobile)
+    sidebar.querySelectorAll('a.nav-link:not([data-bs-toggle])').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (window.innerWidth < 992) closeSidebar();
+      });
+    });
+    // Swipe left on sidebar to close
+    var _tx = 0;
+    sidebar.addEventListener('touchstart', function (e) { _tx = e.touches[0].clientX; }, { passive: true });
+    sidebar.addEventListener('touchend',   function (e) {
+      if (e.changedTouches[0].clientX - _tx < -48) closeSidebar();
+    }, { passive: true });
+
+    /* ── Searchable-dropdown backdrop (mobile bottom-sheet) ─────── */
+    var sdBackdrop = document.createElement('div');
+    sdBackdrop.className = 'sd-backdrop';
+    document.body.appendChild(sdBackdrop);
+    sdBackdrop.addEventListener('click', function () {
+      document.querySelectorAll('.sd-wrap.open').forEach(function (w) { w.classList.remove('open'); });
+      sdBackdrop.classList.remove('visible');
+    });
+    // Patch sdToggle to show/hide backdrop on mobile
+    var _origToggle = window.sdToggle;
+    window.sdToggle = function (id) {
+      if (_origToggle) _origToggle(id);
+      if (window.innerWidth <= 767) {
+        var isOpen = document.getElementById('sdWrap_' + id) &&
+                     document.getElementById('sdWrap_' + id).classList.contains('open');
+        sdBackdrop.classList.toggle('visible', isOpen);
+      }
+    };
+  })();
+  </script>
+
 </body>
 
 </html>

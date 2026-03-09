@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Events — Star Admin2</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../assets/vendors/feather/feather.css">
+  <link rel="stylesheet" href="../../assets/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/typicons/typicons.css">
+  <link rel="stylesheet" href="../../assets/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../assets/images/favicon.png" />
+  <style>
+    select,
+    select option {
+      color: #000 !important;
+    }
+
+    .filter-card {
+      background: #f8f9ff;
+      border: 1px solid #e0e0f5;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .tbl-wrap {
+      max-height: 480px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e0e0f5;
+    }
+
+    .report-table thead th {
+      background: #4B49AC;
+      color: #fff;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .report-table tbody tr:hover {
+      background: #f0f0ff;
+    }
+
+    .badge-reg {
+      background: #d1f5ea;
+      color: #00b894;
+      border: 1px solid #00b894;
+    }
+
+    .badge-irr {
+      background: #fdecea;
+      color: #d63031;
+      border: 1px solid #d63031;
+    }
+
+    .abhyasi-badge {
+      font-size: .68rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .event-card {
+      border-radius: 12px;
+      border: 2px solid #e0e0f5;
+      cursor: pointer;
+      transition: all .2s;
+      background: #fff;
+      padding: 1rem 1.25rem;
+    }
+
+    .event-card:hover {
+      border-color: #4B49AC;
+      background: #f8f7ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(75, 73, 172, .12);
+    }
+
+    .event-card.active {
+      border-color: #4B49AC;
+      background: #f0eeff;
+    }
+
+    .event-date-badge {
+      background: #4B49AC;
+      color: #fff;
+      border-radius: 8px;
+      padding: 2px 10px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid #eee;
+      margin: 1.5rem 0;
+    }
+
+    .modal-header {
+      background: #4B49AC;
+      color: #fff;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    .row-del {
+      color: #d63031;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: background .15s;
+    }
+
+    .row-del:hover {
+      background: #fdecea;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+
+      .tbl-wrap {
+        max-height: none;
+        overflow: visible;
+        border: none;
+      }
+    }
+
+    /* Image gallery */
+    .img-thumb-wrap {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 1/1;
+      border: 2px solid #e0e0f5;
+      background: #f8f9ff;
+      cursor: pointer;
+    }
+
+    .img-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .2s;
+    }
+
+    .img-thumb-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    .img-del-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(214, 48, 49, .85);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: .75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity .2s;
+      z-index: 2;
+    }
+
+    .img-thumb-wrap:hover .img-del-btn {
+      opacity: 1;
+    }
+
+    /* Lightbox */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #lightbox.open {
+      display: flex;
+    }
+
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 88vh;
+      border-radius: 10px;
+      box-shadow: 0 8px 48px rgba(0, 0, 0, .5);
+    }
+
+    #lightboxClose {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+    }
+  </style>
+  <link rel="stylesheet" href="../../assets/css/ts12-mobile.css">
+</head>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    /* ── fetchJSON: always shows real server/PHP errors ──────────────── */
+    async function fetchJSON(url, opts = {}) {
+      const res = await fetch(url, opts);
+      const contentType = res.headers.get('content-type') || '';
+      let body;
+      if (contentType.includes('application/json')) {
+        body = await res.json();
+      } else {
+        const text = await res.text();
+        // PHP returned HTML (e.g. fatal error) — extract useful part
+        const match = text.match(/<b>(?:Fatal error|Parse error|Warning)[^<]*/i);
+        throw new Error(match ? match[0].replace(/<[^>]+>/g,'') : `HTTP ${res.status}: Server returned non-JSON response`);
+      }
+      if (!res.ok) throw new Error(body.error || body.message || `HTTP ${res.status}`);
+      return body;
+    }
+
+    const BASE = "../backend";
+    const fmtDate = d => { const s = d || ""; return s.length === 10 ? s : (new Date(s).toISOString().split("T")[0] || s); };
+
+    let events = [];
+    let allAbhyasis = [];   // all for selected center
+    let eventAbhyasis = [];   // currently added to selected event
+    let activeEvtId = null;
+
+    /* ─────────── INIT ─────────── */
+    loadCenters();
+    loadEvents();
+
+    /* ─────────── CENTERS ─────────── */
+    async function loadCenters() {
+      try {
+        const data = await fetchJSON(`${BASE}/centers_api.php`);
+        ["centerSel", "evtCenter"].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.innerHTML = '<option value="">— Select Center —</option>' +
+            data.map(c => `<option value="${c.center_id}">${c.center_name}</option>`).join("");
+        });
+      } catch (e) {
+        showError(`❌ ${e.message}`);
+      }
+    }
+
+    /* ─────────── EVENTS LIST ─────────── */
+    async function loadEvents() {
+      try {
+        const data = await fetchJSON(`${BASE}/events_api.php`);
+        events = Array.isArray(data) ? data : [];
+        renderEventCards();
+      } catch (e) {
+        events = [];
+        document.getElementById("eventCards").innerHTML =
+          '<div class="text-muted text-center py-4 small">Could not load events. Check server connection.</div>';
+      }
+    }
+
+    function renderEventCards() {
+      const wrap = document.getElementById("eventCards");
+      if (!events.length) {
+        wrap.innerHTML = '<div class="text-muted text-center py-4">No events yet. Create one above.</div>';
+        return;
+      }
+      wrap.innerHTML = events.map(e => `
+      <div class="event-card mb-2 ${e.evt_id === activeEvtId ? 'active' : ''}"
+           onclick="selectEvent(${e.evt_id})">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold" style="color:#4B49AC;">${e.event_name}</div>
+            <div class="text-muted small mt-1">
+              <span class="event-date-badge me-2">${fmtDate(e.event_date)}</span>
+              ${e.location ? '<i class="mdi mdi-map-marker me-1"></i>' + e.location : ''}
+              ${e.district ? ' · ' + e.district : ''}
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-end gap-1">
+            <span class="badge" style="background:#f0eeff;color:#4B49AC;border:1px solid #4B49AC;font-size:.72rem;">
+              ${e.registered_count || 0} abhyasis
+            </span>
+            <div class="d-flex gap-1 no-print">
+              <button class="btn btn-xs btn-outline-primary" style="font-size:.7rem;padding:1px 7px;"
+                onclick="event.stopPropagation(); openEditModal(${e.evt_id})">
+                <i class="mdi mdi-pencil"></i>
+              </button>
+              <button class="btn btn-xs btn-outline-danger" style="font-size:.7rem;padding:1px 7px;"
+                onclick="event.stopPropagation(); deleteEvent(${e.evt_id})">
+                <i class="mdi mdi-delete"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>`).join("");
+    }
+
+    /* ─────────── SELECT EVENT → load its abhyasis ─────────── */
+    window.selectEvent = async function (evtId) {
+      activeEvtId = evtId;
+      renderEventCards();
+      const evt = events.find(e => e.evt_id === evtId);
+      if (evt) {
+        document.getElementById("evtTitle").textContent = evt.event_name;
+        document.getElementById("evtMeta").textContent =
+          [fmtDate(evt.event_date), evt.location, evt.district].filter(Boolean).join("  ·  ");
+      }
+      document.getElementById("abhyasiPanel").style.display = "block";
+      document.getElementById("imagePanel").style.display = "block";
+      document.getElementById("noEvtMsg").style.display = "none";
+      await loadEventAbhyasis(evtId);
+      await loadEventImages(evtId);
+    };
+
+    async function loadEventAbhyasis(evtId) {
+      try {
+        eventAbhyasis = await fetchJSON(`${BASE}/events_api.php?action=abhyasis&id=${evtId}`);
+        renderEventAbhyasisTable();
+      } catch (e) { eventAbhyasis = []; renderEventAbhyasisTable(); }
+    }
+
+    function renderEventAbhyasisTable() {
+      const count = eventAbhyasis.length;
+      document.getElementById("evtAbhyasiCount").textContent = `${count} registered`;
+      const tbody = document.getElementById("evtAbhyasiTbody");
+      if (!count) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">No abhyasis added to this event yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = eventAbhyasis.map((a, i) => {
+        const regLabel = (a.is_regular_practicing || "").toLowerCase() === "yes"
+          ? '<span class="abhyasi-badge badge-reg">Regular</span>'
+          : (a.is_regular_practicing || "").toLowerCase() === "no"
+            ? '<span class="abhyasi-badge badge-irr">Irregular</span>'
+            : '<span class="text-muted small">—</span>';
+        return `<tr>
+        <td class="text-muted small">${i + 1}</td>
+        <td class="fw-semibold">${(a.abhyasi_name || "").trim()}</td>
+        <td>${a.srcm_id || '<span class="text-muted">—</span>'}</td>
+        <td>${a.mobile_no || '<span class="text-muted">—</span>'}</td>
+        <td>${a.email_id || '<span class="text-muted">—</span>'}</td>
+        <td>${a.center_name || ""}</td>
+        <td>${regLabel}</td>
+        <td class="text-center no-print">
+          <button class="row-del" onclick="removeAbhyasi(${a.abhyasi_id})" title="Remove">
+            <i class="mdi mdi-close-circle"></i>
+          </button>
+        </td>
+      </tr>`;
+      }).join("");
+    }
+
+    /* ─────────── ADD ABHYASIS PANEL ─────────── */
+    document.getElementById("centerSel").addEventListener("change", function () {
+      allAbhyasis = [];
+      renderPickerTable([]);
+      if (this.value) loadAbhyasisForPicker(this.value);
+    });
+    document.getElementById("regularSel").addEventListener("change", applyPickerFilter);
+    document.getElementById("searchInput").addEventListener("input", applyPickerFilter);
+
+    async function loadAbhyasisForPicker(centerId) {
+      try {
+        const data = await fetchJSON(`${BASE}/abhyasis_api.php?center_id=${centerId}`);
+        allAbhyasis = Array.isArray(data) ? data : [];
+        applyPickerFilter();
+      } catch (e) { allAbhyasis = []; renderPickerTable([]); }
+    }
+
+    function applyPickerFilter() {
+      const reg = document.getElementById("regularSel").value;
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+      let filtered = allAbhyasis;
+      if (reg) filtered = filtered.filter(a => (a.is_regular_practicing || "").toLowerCase() === reg);
+      if (search) filtered = filtered.filter(a => {
+        const name = ((a.abhyasi_name || "").trim() || ((a.first_name || "") + " " + (a.last_name || "")).trim()).toLowerCase();
+        return name.includes(search) || (a.srcm_id || "").toLowerCase().includes(search);
+      });
+      renderPickerTable(filtered);
+    }
+
+    function renderPickerTable(data) {
+      const selAllChk = document.getElementById("selectAllPicker");
+      const tbody = document.getElementById("pickerTbody");
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">No abhyasis found.</td></tr>';
+        selAllChk.checked = false; selAllChk.indeterminate = false;
+        return;
+      }
+      const alreadyAdded = new Set(eventAbhyasis.map(a => a.abhyasi_id));
+      tbody.innerHTML = data.map((a, i) => {
+        const name = (a.abhyasi_name || "").trim() || ((a.first_name || "") + " " + (a.last_name || "")).trim();
+        const already = alreadyAdded.has(a.abhyasi_id);
+        const regLabel = (a.is_regular_practicing || "").toLowerCase() === "yes"
+          ? '<span class="abhyasi-badge badge-reg">Regular</span>'
+          : (a.is_regular_practicing || "").toLowerCase() === "no"
+            ? '<span class="abhyasi-badge badge-irr">Irregular</span>'
+            : '<span class="text-muted small">—</span>';
+        return `<tr class="${already ? 'table-success' : ''}">
+        <td class="text-center">
+          <input type="checkbox" class="form-check-input picker-chk" value="${a.abhyasi_id}"
+            ${already ? 'checked disabled' : ''} >
+        </td>
+        <td class="fw-semibold">${name}</td>
+        <td>${a.srcm_id || '<span class="text-muted">—</span>'}</td>
+        <td>${a.mobile_no || '<span class="text-muted">—</span>'}</td>
+        <td>${regLabel}</td>
+      </tr>`;
+      }).join("");
+      updateSelectAll();
+    }
+
+    // Select-all picker
+    document.getElementById("selectAllPicker").addEventListener("change", function () {
+      document.querySelectorAll(".picker-chk:not(:disabled)").forEach(c => c.checked = this.checked);
+      updateSelectAll();
+    });
+    document.getElementById("pickerTbody").addEventListener("change", function (e) {
+      if (e.target.classList.contains("picker-chk")) updateSelectAll();
+    });
+    function updateSelectAll() {
+      const all = document.querySelectorAll(".picker-chk:not(:disabled)");
+      const checked = document.querySelectorAll(".picker-chk:not(:disabled):checked");
+      const chk = document.getElementById("selectAllPicker");
+      chk.checked = all.length > 0 && all.length === checked.length;
+      chk.indeterminate = checked.length > 0 && checked.length < all.length;
+    }
+
+    /* ─────────── ADD selected to event ─────────── */
+    document.getElementById("addAbhyasisBtn").addEventListener("click", async function () {
+      if (!activeEvtId) { showError("Please select an event first."); return; }
+      const checked = [...document.querySelectorAll(".picker-chk:not(:disabled):checked")];
+      if (!checked.length) { showError("Please select at least one abhyasi."); return; }
+      const ids = checked.map(c => c.value);
+
+      const btn = this;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Adding…';
+      try {
+        const res = await fetch(`${BASE}/events_api.php?action=add_abhyasis&id=${activeEvtId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ abhyasi_ids: ids })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed");
+        await loadEventAbhyasis(activeEvtId);
+        await loadEvents();
+        applyPickerFilter();   // refresh picker to mark newly added rows green
+
+        let msg = `✓ Added ${data.added} abhyasi(s) to event.`;
+        if (data.duplicates && data.duplicates.length)
+          msg += ` Already registered (skipped): ${data.duplicates.join(", ")}.`;
+        showToast(msg, data.duplicates?.length ? "warning" : "success");
+      } catch (e) { showError(e.message); }
+      finally { btn.disabled = false; btn.innerHTML = '<i class="mdi mdi-plus me-1"></i>Add to Event'; }
+    });
+
+    /* ─────────── REMOVE abhyasi from event ─────────── */
+    window.removeAbhyasi = async function (abhyasiId) {
+      if (!activeEvtId) return;
+      if (!confirm("Remove this abhyasi from the event?")) return;
+      try {
+        const res = await fetch(`${BASE}/events_api.php?action=remove_abhyasi&id=${activeEvtId}&abhyasi_id=${abhyasiId}`,
+          { method: "DELETE" });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+        await loadEventAbhyasis(activeEvtId);
+        await loadEvents();
+        applyPickerFilter();
+        showToast("Abhyasi removed from event.", "success");
+      } catch (e) { showError(e.message); }
+    };
+
+    /* ─────────── CREATE EVENT ─────────── */
+    document.getElementById("createEventBtn").addEventListener("click", async function () {
+      const name = document.getElementById("evtName").value.trim();
+      const date = document.getElementById("evtDate").value;
+      const loc = document.getElementById("evtLocation").value.trim();
+      const dist = document.getElementById("evtDistrict").value.trim();
+
+      if (!name) { showError("Event name is required."); return; }
+      if (!date) { showError("Event date is required."); return; }
+
+      const btn = this;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving…';
+      try {
+        const res = await fetch(`${BASE}/events_api.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event_name: name, event_date: date,
+            location: loc, district: dist,
+            no_of_attendancies: parseInt(document.getElementById("evtAttendancies").value || 0)
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed");
+        // Clear form
+        ["evtName", "evtDate", "evtLocation", "evtDistrict", "evtAttendancies"].forEach(id =>
+          document.getElementById(id).value = "");
+        bootstrap.Collapse.getOrCreateInstance(
+          document.getElementById("createCollapse")).hide();
+        await loadEvents();
+        showToast("✓ Event created!", "success");
+        selectEvent(data.evt_id);
+      } catch (e) { showError(e.message); }
+      finally { btn.disabled = false; btn.innerHTML = '<i class="mdi mdi-plus me-1"></i>Create Event'; }
+    });
+
+    /* ─────────── EDIT EVENT ─────────── */
+    window.openEditModal = function (evtId) {
+      const evt = events.find(e => e.evt_id === evtId);
+      if (!evt) return;
+      document.getElementById("editEvtId").value = evt.evt_id;
+      document.getElementById("editEvtName").value = evt.event_name;
+      // Normalise date to YYYY-MM-DD regardless of what MySQL returns
+      const rawDate = evt.event_date || "";
+      const parsedDate = rawDate.length === 10 ? rawDate : new Date(rawDate).toISOString().split("T")[0];
+      document.getElementById("editEvtDate").value = parsedDate;
+      document.getElementById("editEvtLoc").value = evt.location || "";
+      document.getElementById("editEvtDist").value = evt.district || "";
+      document.getElementById("editEvtAttendancies").value = evt.no_of_attendancies || 0;
+      new bootstrap.Modal(document.getElementById("editModal")).show();
+    };
+
+    document.getElementById("saveEditBtn").addEventListener("click", async function () {
+      const evtId = parseInt(document.getElementById("editEvtId").value);
+      const payload = {
+        event_name: document.getElementById("editEvtName").value.trim(),
+        event_date: document.getElementById("editEvtDate").value,
+        location: document.getElementById("editEvtLoc").value.trim(),
+        district: document.getElementById("editEvtDist").value.trim(),
+        no_of_attendancies: parseInt(document.getElementById("editEvtAttendancies").value || 0),
+      };
+      if (!payload.event_name || !payload.event_date) {
+        showError("Event name and date are required."); return;
+      }
+      try {
+        const res = await fetch(`${BASE}/events_api.php?id=${evtId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+        await loadEvents();
+        showToast("✓ Event updated!", "success");
+      } catch (e) { showError(e.message); }
+    });
+
+    /* ─────────── DELETE EVENT ─────────── */
+    window.deleteEvent = async function (evtId) {
+      if (!confirm("Delete this event and all its abhyasi registrations?")) return;
+      try {
+        const res = await fetch(`${BASE}/events_api.php?id=${evtId}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        if (activeEvtId === evtId) {
+          activeEvtId = null;
+          document.getElementById("abhyasiPanel").style.display = "none";
+        }
+        await loadEvents();
+        showToast("Event deleted.", "success");
+      } catch (e) { showError(e.message); }
+    };
+
+    /* ─────────── PRINT / CSV ─────────── */
+    window.printEventAbhyasis = () => window.print();
+    window.exportEventCSV = function () {
+      const evt = events.find(e => e.evt_id === activeEvtId);
+      const name = evt ? evt.event_name : "event";
+      const rows = [
+        ["#", "Abhyasi Name", "SRCM ID", "Mobile", "Email", "Center", "Practicing"],
+        ...eventAbhyasis.map((a, i) => [
+          i + 1, (a.abhyasi_name || "").trim(), a.srcm_id || "",
+          a.mobile_no || "", a.email_id || "", a.center_name || "",
+          a.is_regular_practicing || ""
+        ])
+      ];
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+      const a = Object.assign(document.createElement("a"), {
+        href: "data:text/csv;charset=utf-8," + encodeURIComponent(csv),
+        download: name.replace(/\s+/g, "_") + "_attendees.csv"
+      });
+      a.click();
+    };
+
+    /* ─────────── IMAGES ─────────── */
+    async function loadEventImages(evtId) {
+      try {
+        const data = await fetchJSON(`${BASE}/events_api.php?action=images&id=${evtId}`);
+        renderImageGrid(Array.isArray(data) ? data : []);
+      } catch (e) { renderImageGrid([]); }
+    }
+
+    function renderImageGrid(images) {
+      const grid = document.getElementById("imageGrid");
+      const noMsg = document.getElementById("noImagesMsg");
+      const count = document.getElementById("imgCount");
+      count.textContent = `${images.length} image(s)`;
+      if (!images.length) {
+        grid.innerHTML = '<div class="col-12 text-center text-muted py-3" id="noImagesMsg">No images uploaded yet.</div>';
+        return;
+      }
+      grid.innerHTML = images.map(img => {
+        const src = `${BASE}/events_api.php?action=serve_image&file=${img.image_path.split("/").pop()}`;
+        return `<div class="col-6 col-md-3 col-lg-2">
+        <div class="img-thumb-wrap" onclick="openLightbox('${src}')">
+          <img src="${src}" alt="Event image" loading="lazy">
+          <button class="img-del-btn no-print" title="Delete image"
+            onclick="event.stopPropagation(); deleteImage(${img.img_id})">
+            <i class="mdi mdi-close" style="font-size:.7rem;"></i>
+          </button>
+        </div>
+      </div>`;
+      }).join("");
+    }
+
+    window.uploadImages = async function (input) {
+      if (!activeEvtId) { showError("Please select an event first."); return; }
+      const files = input.files;
+      if (!files.length) return;
+
+      const progress = document.getElementById("uploadProgress");
+      const bar = document.getElementById("uploadBar");
+      const status = document.getElementById("uploadStatus");
+      progress.style.display = "block";
+      bar.style.width = "10%";
+      status.textContent = `Uploading ${files.length} image(s)…`;
+
+      const formData = new FormData();
+      Array.from(files).forEach(f => formData.append("images", f));
+
+      try {
+        bar.style.width = "50%";
+        const res = await fetch(`${BASE}/events_api.php?action=upload_images&id=${activeEvtId}`, {
+          method: "POST",
+          body: formData
+        });
+        // multipart upload: check response manually
+        if (!res.ok) { const b = await res.json().catch(() => ({})); throw new Error(b.error || 'Upload failed HTTP ' + res.status); }
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed");
+        bar.style.width = "100%";
+        status.textContent = `✓ ${data.uploaded} image(s) uploaded successfully.`;
+        setTimeout(() => { progress.style.display = "none"; bar.style.width = "0%"; }, 2000);
+        input.value = "";   // reset file input
+        await loadEventImages(activeEvtId);
+        showToast(`✓ ${data.uploaded} image(s) uploaded!`, "success");
+      } catch (e) {
+        bar.style.width = "0%";
+        status.textContent = "Upload failed: " + e.message;
+        showError(e.message);
+      }
+    };
+
+    window.deleteImage = async function (imgId) {
+      if (!confirm("Delete this image permanently?")) return;
+      try {
+        const res = await fetch(`${BASE}/events_api.php?action=delete_image&img_id=${imgId}`, { method: "DELETE" });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+        await loadEventImages(activeEvtId);
+        showToast("Image deleted.", "success");
+      } catch (e) { showError(e.message); }
+    };
+
+    /* Lightbox */
+    window.openLightbox = function (src) {
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightbox").classList.add("open");
+    };
+    window.closeLightbox = function () {
+      document.getElementById("lightbox").classList.remove("open");
+      document.getElementById("lightboxImg").src = "";
+    };
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
+
+    /* ─────────── HELPERS ─────────── */
+    function showError(msg) {
+      document.getElementById("errorEl").innerHTML =
+        `<div class="alert alert-danger py-2 mb-2">
+         <i class="mdi mdi-alert-circle-outline me-1"></i><strong>Error:</strong> ${msg}</div>`;
+    }
+    function showToast(msg, type) {
+      const el = document.getElementById("appToast");
+      el.className = `toast align-items-center text-bg-${type} border-0`;
+      el.querySelector(".toast-body").innerHTML = msg;
+      bootstrap.Toast.getOrCreateInstance(el, { delay: 4500 }).show();
+    }
+  });
+</script>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+        </div>
+        <div>
+          <a class="navbar-brand brand-logo" href="../../index.html">
+            <img src="../../assets/images/logo.svg" alt="logo" />
+          </a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html">
+            <img src="../../assets/images/logo-mini.svg" alt="logo" />
+          </a>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+          <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+            <h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">John Doe</span></h1>
+            <h3 class="welcome-sub-text">Your performance summary this week </h3>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown d-none d-lg-block">
+            <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#"
+              data-bs-toggle="dropdown" aria-expanded="false"> Select Category </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="messageDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">Select category</p>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Bootstrap Bundle </p>
+                  <p class="fw-light small-text mb-0">This is a Bundle featuring 16 unique dashboards</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Angular Bundle</p>
+                  <p class="fw-light small-text mb-0">Everything you’ll ever need for your Angular projects</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">VUE Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 6 Premium Vue Admin Dashboard</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">React Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 8 Premium React Admin Dashboard</p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item d-none d-lg-block">
+            <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
+              <span class="input-group-addon input-group-prepend border-right">
+                <span class="icon-calendar input-group-text calendar-icon"></span>
+              </span>
+              <input type="text" class="form-control">
+            </div>
+          </li>
+          <li class="nav-item">
+            <form class="search-form" action="#">
+              <i class="icon-search"></i>
+              <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+            </form>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+              <i class="icon-bell"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="notificationDropdown">
+              <a class="dropdown-item py-3 border-bottom">
+                <p class="mb-0 fw-medium float-start">You have 4 new notifications </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-alert m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
+                  <p class="fw-light small-text mb-0"> Just now </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-lock-outline m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
+                  <p class="fw-light small-text mb-0"> Private message </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-airballoon m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
+                  <p class="fw-light small-text mb-0"> 2 days ago </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="icon-mail icon-lg"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="countDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">You have 7 unread mails </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face10.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Marian Garner </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face12.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">David Grey </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face1.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Travis Jenkins </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <!-- TS12-AUTH: user widget injected by ts12-auth.js -->
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-bs-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../../index.html">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Heartfulness</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="menu-icon mdi mdi-floor-plan"></i>
+              <span class="menu-title">Satsang</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-attendance.html">Sunday
+                    Attendance</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false"
+              aria-controls="form-elements">
+              <i class="menu-icon mdi mdi-card-text-outline"></i>
+              <span class="menu-title">Sitting</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="../../pages/tables/view-sitting.html">Individual
+                    Sitting</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+              <i class="menu-icon mdi mdi-table"></i>
+              <span class="menu-title">Centers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-centers.html">Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-subcenters.html">Sub
+                    Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-abhyasis.html">Abhyasis</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-volunteer-works.html">Volunteer
+                    Details</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link"
+                    href="../../pages/tables/view-volunteer-work-abhyasi.html">Volunteer Work Abhyasi</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+              <i class="menu-icon mdi mdi-layers-outline"></i>
+              <span class="menu-title">Reports</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="icons">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-reports.html">All Reports</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nav-events" aria-expanded="false"
+              aria-controls="nav-events">
+              <i class="menu-icon mdi mdi-file-document"></i>
+              <span class="menu-title">Events</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nav-events">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-events.html">All Events</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+
+          <div id="errorEl"></div>
+
+          <!-- ── Page Header ── -->
+          <div class="d-flex align-items-center justify-content-between mb-3 no-print">
+            <div>
+              <h4 class="fw-bold mb-0" style="color:#4B49AC;">
+                <i class="mdi mdi-calendar-star me-2"></i>Events
+              </h4>
+              <p class="text-muted small mb-0 mt-1">Create events and manage abhyasi registrations</p>
+            </div>
+            <button class="btn btn-sm text-white no-print" style="background:#4B49AC;" data-bs-toggle="collapse"
+              data-bs-target="#createCollapse">
+              <i class="mdi mdi-plus me-1"></i>New Event
+            </button>
+          </div>
+
+          <!-- ── Create Event (collapsible) ── -->
+          <div class="collapse mb-3 no-print" id="createCollapse">
+            <div class="filter-card">
+              <h6 class="fw-bold mb-3" style="color:#4B49AC;">
+                <i class="mdi mdi-calendar-plus me-1"></i>Create New Event
+              </h6>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold text-muted small">EVENT NAME <span
+                      class="text-danger">*</span></label>
+                  <input id="evtName" type="text" class="form-control form-control-sm" placeholder="e.g. Bhandara 2026">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold text-muted small">EVENT DATE <span
+                      class="text-danger">*</span></label>
+                  <input id="evtDate" type="date" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold text-muted small">LOCATION</label>
+                  <input id="evtLocation" type="text" class="form-control form-control-sm" placeholder="Venue / City">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold text-muted small">DISTRICT</label>
+                  <input id="evtDistrict" type="text" class="form-control form-control-sm" placeholder="District">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold text-muted small">NO. OF ATTENDANCIES</label>
+                  <input id="evtAttendancies" type="number" min="0" class="form-control form-control-sm"
+                    placeholder="0">
+                </div>
+              </div>
+              <div class="mt-3">
+                <button id="createEventBtn" class="btn btn-sm text-white px-4" style="background:#4B49AC;">
+                  <i class="mdi mdi-plus me-1"></i>Create Event
+                </button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" data-bs-toggle="collapse"
+                  data-bs-target="#createCollapse">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Two-column layout ── -->
+          <div class="row">
+
+            <!-- LEFT: Events list -->
+            <div class="col-md-4 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h6 class="fw-bold mb-3" style="color:#4B49AC;">
+                    <i class="mdi mdi-format-list-bulleted me-1"></i>Events
+                  </h6>
+                  <div id="eventCards"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Event detail + abhyasi management -->
+            <div class="col-md-8 mb-3">
+
+              <!-- Abhyasi panel (shown when event selected) -->
+              <div id="abhyasiPanel" style="display:none;">
+
+                <!-- Event summary -->
+                <div class="card mb-3">
+                  <div class="card-body py-2 px-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="fw-bold" style="color:#4B49AC;" id="evtTitle"></span>
+                        <span class="text-muted small ms-3" id="evtMeta"></span>
+                      </div>
+                      <span class="badge" style="background:#f0eeff;color:#4B49AC;border:1px solid #4B49AC;"
+                        id="evtAbhyasiCount"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Add abhyasis section -->
+                <div class="filter-card mb-3 no-print">
+                  <h6 class="fw-bold mb-3" style="color:#4B49AC;">
+                    <i class="mdi mdi-account-plus me-1"></i>Add Abhyasis to Event
+                  </h6>
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-4">
+                      <label class="form-label fw-semibold text-muted small mb-1">CENTER</label>
+                      <select id="centerSel" class="form-select form-select-sm">
+                        <option value="">— Select Center —</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label fw-semibold text-muted small mb-1">PRACTICING</label>
+                      <select id="regularSel" class="form-select form-select-sm">
+                        <option value="">— All —</option>
+                        <option value="yes">Regular</option>
+                        <option value="no">Irregular</option>
+                      </select>
+                    </div>
+                    <div class="col-md-5">
+                      <label class="form-label fw-semibold text-muted small mb-1">SEARCH ABHYASI</label>
+                      <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white"><i class="mdi mdi-magnify"></i></span>
+                        <input id="searchInput" type="text" class="form-control border-start-0"
+                          placeholder="Name or SRCM ID…">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Picker table -->
+                  <div class="tbl-wrap" style="max-height:220px;">
+                    <table class="table table-bordered table-sm mb-0 report-table">
+                      <thead>
+                        <tr>
+                          <th style="width:36px;" class="text-center">
+                            <input type="checkbox" id="selectAllPicker" class="form-check-input">
+                          </th>
+                          <th>Abhyasi Name</th>
+                          <th>SRCM ID</th>
+                          <th>Mobile</th>
+                          <th>Practicing</th>
+                        </tr>
+                      </thead>
+                      <tbody id="pickerTbody">
+                        <tr>
+                          <td colspan="5" class="text-center text-muted py-3">Select a center to load abhyasis.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="mt-2 text-end">
+                    <button id="addAbhyasisBtn" class="btn btn-sm text-white" style="background:#4B49AC;">
+                      <i class="mdi mdi-plus me-1"></i>Add to Event
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Registered abhyasis table -->
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <div class="d-flex align-items-center gap-2">
+                        <i class="mdi mdi-account-group" style="color:#4B49AC;font-size:1.2rem;"></i>
+                        <h6 class="mb-0 fw-bold" style="color:#4B49AC;">Registered Abhyasis</h6>
+                        <span id="evtAbhyasiCount" class="text-muted small"></span>
+                      </div>
+                      <div class="d-flex gap-2 no-print">
+                        <button onclick="exportEventCSV()" class="btn btn-sm btn-outline-success">
+                          <i class="mdi mdi-microsoft-excel me-1"></i>CSV
+                        </button>
+                        <button onclick="printEventAbhyasis()" class="btn btn-sm btn-outline-secondary">
+                          <i class="mdi mdi-printer me-1"></i>Print
+                        </button>
+                      </div>
+                    </div>
+                    <div class="tbl-wrap">
+                      <table class="table table-bordered table-sm mb-0 report-table">
+                        <thead>
+                          <tr>
+                            <th style="width:36px;">#</th>
+                            <th>Abhyasi Name</th>
+                            <th>SRCM ID</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Center</th>
+                            <th>Practicing</th>
+                            <th class="no-print" style="width:40px;"></th>
+                          </tr>
+                        </thead>
+                        <tbody id="evtAbhyasiTbody">
+                          <tr>
+                            <td colspan="8" class="text-center text-muted py-3">Select an event to see registrations.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- /abhyasiPanel -->
+
+              <!-- ── Image Gallery Section ── -->
+              <div id="imagePanel" style="display:none;" class="mt-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <div class="d-flex align-items-center gap-2">
+                        <i class="mdi mdi-image-multiple" style="color:#4B49AC;font-size:1.2rem;"></i>
+                        <h6 class="mb-0 fw-bold" style="color:#4B49AC;">Event Images</h6>
+                        <span id="imgCount" class="text-muted small"></span>
+                      </div>
+                      <label class="btn btn-sm text-white no-print" style="background:#4B49AC;cursor:pointer;">
+                        <i class="mdi mdi-upload me-1"></i>Upload Images
+                        <input type="file" id="imageUploadInput" multiple accept="image/*" style="display:none;"
+                          onchange="uploadImages(this)">
+                      </label>
+                    </div>
+
+                    <!-- Upload progress -->
+                    <div id="uploadProgress" style="display:none;" class="mb-3">
+                      <div class="progress" style="height:8px;">
+                        <div id="uploadBar" class="progress-bar"
+                          style="width:0%;background:#4B49AC;transition:width .3s;"></div>
+                      </div>
+                      <div id="uploadStatus" class="text-muted small mt-1"></div>
+                    </div>
+
+                    <!-- Image grid -->
+                    <div id="imageGrid" class="row g-2">
+                      <div class="col-12 text-center text-muted py-3" id="noImagesMsg">
+                        No images uploaded yet.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Placeholder when no event selected -->
+              <div id="noEvtMsg" class="text-center py-5 text-muted" style="display:block;">
+                <i class="mdi mdi-calendar-blank-outline mdi-48px d-block mb-2" style="color:#ccc;"></i>
+                Select an event from the list to manage its abhyasis
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /content-wrapper -->
+        <footer class="footer no-print">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block d-sm-inline-block">Premium
+              <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a>
+              from BootstrapDash.
+            </span>
+            <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights
+              reserved.</span>
+          </div>
+        </footer>
+      </div><!-- /main-panel -->
+    </div>
+  </div>
+
+  <!-- Edit Event Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content" style="border-radius:12px;">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="mdi mdi-pencil me-2"></i>Edit Event</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editEvtId">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold text-muted small">EVENT NAME *</label>
+              <input id="editEvtName" type="text" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-muted small">EVENT DATE *</label>
+              <input id="editEvtDate" type="date" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-muted small">DISTRICT</label>
+              <input id="editEvtDist" type="text" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-muted small">NO. OF ATTENDANCIES</label>
+              <input id="editEvtAttendancies" type="number" min="0" class="form-control form-control-sm">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold text-muted small">LOCATION</label>
+              <input id="editEvtLoc" type="text" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="saveEditBtn" class="btn btn-sm text-white" style="background:#4B49AC;">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:11000">
+    <div id="appToast" class="toast align-items-center border-0" role="alert" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body fw-semibold"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" onclick="closeLightbox()">
+    <button id="lightboxClose" onclick="closeLightbox()">&#10005;</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+  <script src="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+  <script src="../../assets/js/off-canvas.js"></script>
+  <script src="../../assets/js/template.js"></script>
+  <script src="../../assets/js/settings.js"></script>
+  <script src="../../assets/js/hoverable-collapse.js"></script>
+  <script src="../../assets/js/todolist.js"></script>
+  <script>
+
+    (function () {
+      "use strict";
+
+      /* ── 1. Read session ── */
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem("ts12_user") || "null"); } catch (e) { }
+
+      var path = window.location.pathname;
+      var page = (path.split("/").pop() || "index.html").split("?")[0];
+      var inTables = path.indexOf("/pages/tables/") !== -1;
+      var loginUrl = inTables ? "../../login.html" : "login.html";
+      var indexUrl = inTables ? "../../index.html" : "index.html";
+
+      /* ── 2. No session → redirect to login ── */
+      if (!session || !session.srcm_id) {
+        window.location.replace(loginUrl);
+        return;
+      }
+
+      var FULL_ROLES = ["zc", "cc", "dc", "nc"];   /* NC gets full access */
+      var DELETE_ROLES = ["zc", "dc"];
+
+      var roles = (session.roles || []).map(function (r) { return r.toLowerCase().trim(); });
+
+      /* Always re-derive from roles[] - never trust the cached localStorage value.
+         This ensures NC (and any other role) always gets the correct access level. */
+      var roleLevel = roles.some(function (r) { return FULL_ROLES.indexOf(r) !== -1; }) ? "full" : "preceptor";
+      var canDelete = roles.some(function (r) { return DELETE_ROLES.indexOf(r) !== -1; });
+
+      /* Write corrected values back so they stay consistent */
+      session.roleLevel = roleLevel;
+      session.canDelete = canDelete;
+      try { localStorage.setItem("ts12_user", JSON.stringify(session)); } catch (e) { }
+
+      /* ── 3. Preceptor page guard ── */
+      var adminPages = ["view-abhyasis.html", "view-centers.html", "view-subcenters.html",
+        "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+      if (roleLevel === "preceptor" && adminPages.indexOf(page) !== -1) {
+        window.location.replace(indexUrl);
+        return;
+      }
+
+      /* ── 4. Build user dropdown HTML ── */
+      function buildUserMenu() {
+        var initial = (session.name || "?").charAt(0).toUpperCase();
+        var badges = (session.roles || []).map(function (r) {
+          return '<span style="display:inline-block;font-size:.58rem;font-weight:700;padding:1px 7px;'
+            + 'border-radius:20px;background:rgba(255,255,255,.25);color:#fff;'
+            + 'border:1px solid rgba(255,255,255,.4);text-transform:uppercase;margin:1px;">' + r + '</span>';
+        }).join("");
+        var access = canDelete
+          ? '<span style="color:#00b894;font-weight:600;">Full Access + Delete</span>'
+          : roleLevel === "full"
+            ? '<span style="color:#4B49AC;font-weight:600;">Full Access</span>'
+            : '<span style="color:#e17055;font-weight:600;">Limited Access</span>';
+
+        return ''
+          + '<li class="nav-item dropdown d-none d-lg-block" id="ts12UserMenu">'
+          + '<a class="nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false" style="padding:8px 6px;">'
+          + '<div style="width:34px;height:34px;border-radius:50%;'
+          + 'background:linear-gradient(135deg,#4B49AC,#7b79d4);'
+          + 'display:flex;align-items:center;justify-content:center;'
+          + 'color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;'
+          + 'box-shadow:0 2px 8px rgba(75,73,172,.4);">' + initial + '</div></a>'
+          + '<div class="dropdown-menu dropdown-menu-right navbar-dropdown" '
+          + 'style="min-width:230px;border-radius:14px;overflow:hidden;'
+          + 'box-shadow:0 8px 32px rgba(75,73,172,.2);border:1px solid #e4e4f5;padding:0;">'
+          /* Header */
+          + '<div style="background:linear-gradient(135deg,#4B49AC,#7b79d4);padding:1rem;text-align:center;">'
+          + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.22);'
+          + 'display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;'
+          + 'font-size:1.5rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.4);">'
+          + initial + '</div>'
+          + '<p style="margin:0;font-weight:700;color:#fff;font-size:.9rem;">' + (session.name || "") + '</p>'
+          + '<p style="margin:2px 0 6px;color:rgba(255,255,255,.75);font-size:.7rem;">' + session.srcm_id + '</p>'
+          + '<div>' + badges + '</div></div>'
+          /* Access */
+          + '<div style="padding:.5rem .9rem;border-bottom:1px solid #eef;font-size:.76rem;'
+          + 'display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-shield-check-outline" style="color:#4B49AC;"></i>' + access + '</div>'
+          /* Sign Out */
+          + '<a class="dropdown-item" onclick="ts12Logout()" '
+          + 'style="cursor:pointer;color:#d63031;font-size:.82rem;padding:.6rem .9rem;display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-logout" style="font-size:1rem;"></i> Sign Out</a>'
+          + '</div></li>';
+      }
+
+      /* ── 5. Replace Login button with user menu ── */
+      function renderUserMenu() {
+        /* Hide/remove the Login button */
+        var loginLi = document.getElementById("ts12LoginNavItem");
+        if (loginLi) loginLi.remove();
+
+        /* Remove any old user menu */
+        var old = document.getElementById("ts12UserMenu");
+        if (old) old.remove();
+
+        /* Find the right <ul> and append */
+        var ul = document.querySelector(".navbar-menu-wrapper .navbar-nav.ms-auto");
+        if (ul) {
+          ul.insertAdjacentHTML("beforeend", buildUserMenu());
+        }
+      }
+
+      /* ── 6. Hide preceptor-restricted sidebar links ── */
+      function hideSidebarLinks() {
+        if (roleLevel === "full") return;
+        var restricted = ["view-centers.html", "view-subcenters.html", "view-abhyasis.html",
+          "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+        document.querySelectorAll("#sidebar a, .sidebar a").forEach(function (a) {
+          var href = (a.getAttribute("href") || "").split("/").pop().split("?")[0];
+          if (restricted.indexOf(href) !== -1) {
+            var li = a.closest("li");
+            if (li) li.style.display = "none";
+          }
+        });
+        /* Hide empty parent collapse items */
+        document.querySelectorAll("#sidebar .collapse, .sidebar .collapse").forEach(function (col) {
+          var vis = Array.from(col.querySelectorAll("li.nav-item")).filter(function (li) {
+            return li.style.display !== "none";
+          });
+          if (!vis.length && col.querySelectorAll("li.nav-item").length) {
+            var par = col.closest("li.nav-item");
+            if (par) par.style.display = "none";
+          }
+        });
+      }
+
+      /* ── 7. Disable delete buttons for non-ZC/DC ── */
+      var TIP = "Delete is restricted to ZC and DC roles only";
+      function lockDeleteButtons() {
+        if (canDelete) return;
+        function lock(btn) {
+          if (!btn || btn._ts12locked) return;
+          btn._ts12locked = true;
+          btn.disabled = true;
+          btn.title = TIP;
+          btn.style.cssText += ";opacity:0.3!important;cursor:not-allowed!important;pointer-events:none!important;";
+        }
+        document.querySelectorAll(".btn-outline-danger,.row-del,.img-del-btn").forEach(lock);
+        var conf = document.getElementById("confirmDeleteBtn");
+        if (conf) lock(conf);
+        if (!window._ts12NoDel) {
+          window._ts12NoDel = true;
+          var no = function () { alert(TIP); return false; };
+          window.openDeleteModal = no; window.deleteEvent = no;
+          window.removeAbhyasi = no; window.deleteImage = no;
+        }
+      }
+
+      /* ── 8. Globals ── */
+      window.ts12User = session; window.ts12Roles = roles;
+      window.ts12RoleLevel = roleLevel; window.ts12CanDelete = canDelete;
+      window.ts12Logout = function () {
+        localStorage.removeItem("ts12_user");
+        window.location.replace(loginUrl);
+      };
+
+      /* ── 9. Boot ── */
+      function boot() {
+        renderUserMenu();
+        hideSidebarLinks();
+        lockDeleteButtons();
+        setTimeout(lockDeleteButtons, 600);
+        setTimeout(lockDeleteButtons, 1800);
+        var obs = new MutationObserver(lockDeleteButtons);
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        setTimeout(boot, 0);  /* yield to let DOM settle */
+      }
+
+    })();
+
+  </script>
+
+
+
+  <!-- ── TS12 Mobile Sidebar & SD Backdrop ───────────────────── -->
+  <script>
+  (function () {
+    var sidebar  = document.getElementById('sidebar');
+    var toggler  = document.querySelector('.navbar-toggler-right[data-bs-toggle="offcanvas"]');
+    if (!sidebar) return;
+
+    /* ── Sidebar open / close ─────────────────────────────────── */
+    function openSidebar() {
+      sidebar.classList.add('ts12-open');
+      document.body.classList.add('ts12-sidebar-open');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('ts12-open');
+      document.body.classList.remove('ts12-sidebar-open');
+    }
+    if (toggler) {
+      toggler.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sidebar.classList.contains('ts12-open') ? closeSidebar() : openSidebar();
+      });
+    }
+    // Close on backdrop click
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('ts12-open') &&
+          !sidebar.contains(e.target) &&
+          (!toggler || !toggler.contains(e.target))) {
+        closeSidebar();
+      }
+    });
+    // Close on nav link click (page navigation on mobile)
+    sidebar.querySelectorAll('a.nav-link:not([data-bs-toggle])').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (window.innerWidth < 992) closeSidebar();
+      });
+    });
+    // Swipe left on sidebar to close
+    var _tx = 0;
+    sidebar.addEventListener('touchstart', function (e) { _tx = e.touches[0].clientX; }, { passive: true });
+    sidebar.addEventListener('touchend',   function (e) {
+      if (e.changedTouches[0].clientX - _tx < -48) closeSidebar();
+    }, { passive: true });
+
+    /* ── Searchable-dropdown backdrop (mobile bottom-sheet) ─────── */
+    var sdBackdrop = document.createElement('div');
+    sdBackdrop.className = 'sd-backdrop';
+    document.body.appendChild(sdBackdrop);
+    sdBackdrop.addEventListener('click', function () {
+      document.querySelectorAll('.sd-wrap.open').forEach(function (w) { w.classList.remove('open'); });
+      sdBackdrop.classList.remove('visible');
+    });
+    // Patch sdToggle to show/hide backdrop on mobile
+    var _origToggle = window.sdToggle;
+    window.sdToggle = function (id) {
+      if (_origToggle) _origToggle(id);
+      if (window.innerWidth <= 767) {
+        var isOpen = document.getElementById('sdWrap_' + id) &&
+                     document.getElementById('sdWrap_' + id).classList.contains('open');
+        sdBackdrop.classList.toggle('visible', isOpen);
+      }
+    };
+  })();
+  </script>
+
+</body>
+
+</html>

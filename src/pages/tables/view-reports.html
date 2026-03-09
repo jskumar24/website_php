@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Reports — Star Admin2</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../assets/vendors/feather/feather.css">
+  <link rel="stylesheet" href="../../assets/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../assets/vendors/typicons/typicons.css">
+  <link rel="stylesheet" href="../../assets/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="../../assets/vendors/css/vendor.bundle.base.css">
+  <link rel="stylesheet" href="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../assets/images/favicon.png" />
+  <style>
+    :root {
+      --accent: #4B49AC;
+      --accent-light: #eeeef9;
+      --success: #198754;
+      --danger: #dc3545;
+    }
+
+    select.form-select,
+    select.form-select option,
+    select.form-control,
+    select.form-control option {
+      color: #000 !important;
+    }
+    /* ── Searchable Dropdown ─────────────────────────────────────── */
+    .sd-wrap { position: relative; }
+    .sd-input-row {
+      display: flex; align-items: center;
+      border: 1px solid #dee2e6; border-radius: 6px;
+      background: #fff; cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .sd-input-row:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(75,73,172,.12);
+    }
+    .sd-display {
+      flex: 1; padding: 5px 10px; font-size: .875rem;
+      color: #212529; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; cursor: pointer; user-select: none;
+      min-height: 31px; line-height: 1.5;
+      display: flex; align-items: center;
+    }
+    .sd-display.placeholder { color: #6c757d; }
+    .sd-chevron {
+      padding: 0 9px; color: #6c757d; font-size: .7rem;
+      pointer-events: none; transition: transform .2s;
+    }
+    .sd-wrap.open .sd-chevron { transform: rotate(180deg); }
+    .sd-panel {
+      display: none; position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 340px;
+      background: #fff; border: 1px solid #dee2e6;
+      border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.12);
+      z-index: 1060; overflow: hidden;
+    }
+    .sd-wrap.open .sd-panel { display: block; }
+    .sd-search-box { padding: 8px 10px 6px; border-bottom: 1px solid #f0f0f0; }
+    .sd-search-box input {
+      width: 100%; border: 1px solid #dee2e6; border-radius: 6px;
+      padding: 5px 10px; font-size: .82rem; outline: none;
+    }
+    .sd-search-box input:focus { border-color: var(--accent); }
+    .sd-list { max-height: 220px; overflow-y: auto; }
+    .sd-list::-webkit-scrollbar { width: 5px; }
+    .sd-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    .sd-option {
+      padding: 7px 14px; font-size: .855rem; cursor: pointer;
+      color: #212529; transition: background .1s;
+    }
+    .sd-option:hover, .sd-option.focused { background: var(--accent-light); color: var(--accent); }
+    .sd-option.selected { font-weight: 600; color: var(--accent); background: #eeeeff; }
+    .sd-option.hidden { display: none; }
+    .sd-no-results { padding: 10px 14px; font-size: .82rem; color: #999; text-align: center; }
+
+
+    /* ── Report cards ── */
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .report-card {
+      background: #fff;
+      border: 2px solid #e8e8f5;
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      cursor: pointer;
+      transition: all .18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 18px rgba(75, 73, 172, .15);
+      transform: translateY(-2px);
+    }
+
+    .report-card.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .report-card .rc-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: .7rem;
+    }
+
+    .report-card .rc-title {
+      font-weight: 700;
+      font-size: .9rem;
+      color: #222;
+      line-height: 1.3;
+    }
+
+    .report-card .rc-sub {
+      font-size: .75rem;
+      color: #888;
+      margin-top: .25rem;
+    }
+
+    .report-card .rc-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: .65rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      background: #f8f9ff;
+      border: 1px solid #e0e0f5;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    /* ── Table ── */
+    #reportTable thead th {
+      background: var(--accent);
+      color: #fff;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    #reportTable tbody tr:hover {
+      background: #f0f0ff;
+    }
+
+    .table-wrap {
+      max-height: 500px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e0e0f5;
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: .75rem;
+    }
+
+    .result-count {
+      font-size: .85rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    /* ── Print ── */
+    /* Individual report */
+    .profile-card-ind {
+      background: linear-gradient(135deg, #4B49AC 0%, #7b79d4 100%);
+      color: #fff;
+      border-radius: 14px;
+      padding: 1.25rem 1.75rem;
+    }
+
+    .ind-badge {
+      display: inline-block;
+      font-size: .68rem;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .badge-reg {
+      background: #00b894;
+      color: #fff;
+    }
+
+    .badge-irr {
+      background: #e17055;
+      color: #fff;
+    }
+
+    .summary-box {
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      text-align: center;
+      border: 2px solid;
+    }
+
+    .summary-box .s-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .summary-box .s-lbl {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-top: .2rem;
+    }
+
+    .ind-tbl thead th {
+      background: #4B49AC;
+      color: #fff;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    .ind-tbl tbody tr:hover {
+      background: #f0f0ff;
+    }
+
+    .ind-tbl-wrap {
+      max-height: 300px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #e0e0f5;
+    }
+
+    .att-P {
+      display: inline-block;
+      background: #d1f5ea;
+      color: #00b894;
+      border: 1.5px solid #00b894;
+      border-radius: 20px;
+      padding: 1px 10px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    .att-A {
+      display: inline-block;
+      background: #fdecea;
+      color: #d63031;
+      border: 1.5px solid #d63031;
+      border-radius: 20px;
+      padding: 1px 10px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    .sit-pill {
+      display: inline-block;
+      background: #f0eeff;
+      color: #4B49AC;
+      border: 1.5px solid #4B49AC;
+      border-radius: 20px;
+      padding: 1px 10px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+
+      .table-wrap {
+        max-height: none;
+        overflow: visible;
+        border: none;
+      }
+
+      #reportTable thead th {
+        background: var(--accent) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../../assets/css/ts12-mobile.css">
+</head>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    /* ── fetchJSON: always shows real server/PHP errors ──────────────── */
+    async function fetchJSON(url, opts = {}) {
+      const res = await fetch(url, opts);
+      const contentType = res.headers.get('content-type') || '';
+      let body;
+      if (contentType.includes('application/json')) {
+        body = await res.json();
+      } else {
+        const text = await res.text();
+        // PHP returned HTML (e.g. fatal error) — extract useful part
+        const match = text.match(/<b>(?:Fatal error|Parse error|Warning)[^<]*/i);
+        throw new Error(match ? match[0].replace(/<[^>]+>/g,'') : `HTTP ${res.status}: Server returned non-JSON response`);
+      }
+      if (!res.ok) throw new Error(body.error || body.message || `HTTP ${res.status}`);
+      return body;
+    }
+
+
+    const BASE = "../backend";
+
+    /* ── Report definitions ─────────────────────────────────────── */
+    const REPORTS = [
+      {
+        id: "preceptors", title: "All Preceptors", icon: "mdi-account-star", color: "#6C5CE7", bg: "#f0eeff",
+        desc: "Abhyasis assigned as Preceptors", needsCenter: false, needsDate: false,
+        fetch: () => `${BASE}/reports_api.php?action=by-role&role=preceptor`
+      },
+      {
+        id: "cc", title: "All CC", icon: "mdi-account-tie", color: "#0984e3", bg: "#e8f4fd",
+        desc: "Centre Coordinators", needsCenter: false, needsDate: false,
+        fetch: () => `${BASE}/reports_api.php?action=by-role&role=cc`
+      },
+      {
+        id: "dc", title: "All DC", icon: "mdi-account-network", color: "#00b894", bg: "#e6f9f5",
+        desc: "District Coordinators", needsCenter: false, needsDate: false,
+        fetch: () => `${BASE}/reports_api.php?action=by-role&role=dc`
+      },
+      {
+        id: "nc", title: "All NC", icon: "mdi-earth", color: "#e17055", bg: "#fdf0ee",
+        desc: "National Coordinators", needsCenter: false, needsDate: false,
+        fetch: () => `${BASE}/reports_api.php?action=by-role&role=nc`
+      },
+      {
+        id: "amc", title: "All AMC", icon: "mdi-account-group", color: "#fdcb6e", bg: "#fef9ec",
+        desc: "Area Meditation Coordinators", needsCenter: false, needsDate: false,
+        fetch: () => `${BASE}/reports_api.php?action=by-role&role=amc`
+      },
+      {
+        id: "regular", title: "Regular Abhyasis", icon: "mdi-check-circle", color: "#00b894", bg: "#e6f9f5",
+        desc: "By center — is_regular_practicing = Yes", needsCenter: true, needsDate: false,
+        fetch: (c) => `${BASE}/reports_api.php?action=by-practicing&is_regular=yes${c ? '&center_id=' + c : ''}`
+      },
+      {
+        id: "irregular", title: "Irregular Abhyasis", icon: "mdi-close-circle", color: "#d63031", bg: "#fdecea",
+        desc: "By center — is_regular_practicing = No", needsCenter: true, needsDate: false,
+        fetch: (c) => `${BASE}/reports_api.php?action=by-practicing&is_regular=no${c ? '&center_id=' + c : ''}`
+      },
+      {
+        id: "attended", title: "Attended Satsang", icon: "mdi-calendar-check", color: "#00b894", bg: "#e6f9f5",
+        desc: "Abhyasis who attended satsang", needsCenter: true, needsDate: true,
+        fetch: (c, df, dt) => `${BASE}/reports_api.php?action=attendance&attended=1${c ? '&center_id=' + c : ''}${df ? '&date_from=' + df : ''}${dt ? '&date_to=' + dt : ''}`
+      },
+      {
+        id: "absent", title: "Not Attended Satsang", icon: "mdi-calendar-remove", color: "#d63031", bg: "#fdecea",
+        desc: "Abhyasis who did not attend satsang", needsCenter: true, needsDate: true,
+        fetch: (c, df, dt) => `${BASE}/reports_api.php?action=attendance&attended=0${c ? '&center_id=' + c : ''}${df ? '&date_from=' + df : ''}${dt ? '&date_to=' + dt : ''}`
+      },
+      {
+        id: "missing_details", title: "Missing Details", icon: "mdi-alert-circle-outline", color: "#e17055", bg: "#fdf0ee",
+        desc: "Abhyasis with any missing info (SRCM ID / Mobile / Email / Professional / Age)", needsCenter: true, needsDate: false,
+        isMissingDetails: true,
+        fetch: (c) => `${BASE}/reports_api.php?action=missing-details${c ? '&center_id=' + c : ''}`
+      },
+
+      {
+        id: "sitting_center", title: "Sitting by Center", icon: "mdi-meditation", color: "#6C5CE7", bg: "#f0eeff",
+        desc: "All sitting data filtered by center", needsCenter: true, needsDate: true, needsPreceptor: false, isSitting: true,
+        fetch: (c, df, dt, p) => `${BASE}/reports_api.php?action=sitting&${c ? 'center_id=' + c : ''}${df ? '&date_from=' + df : ''}${dt ? '&date_to=' + dt : ''}`
+      },
+      {
+        id: "sitting_preceptor", title: "Sitting by Preceptor", icon: "mdi-account-star", color: "#00b894", bg: "#e6f9f5",
+        desc: "All sitting data filtered by preceptor name", needsCenter: false, needsDate: true, needsPreceptor: true, isSitting: true,
+        fetch: (c, df, dt, p) => `${BASE}/reports_api.php?action=sitting&${p ? 'preceptor_name=' + encodeURIComponent(p) : ''}${df ? '&date_from=' + df : ''}${dt ? '&date_to=' + dt : ''}`
+      },
+      {
+        id: "by_age", title: "Abhyasis by Age", icon: "mdi-calendar-account", color: "#0984e3", bg: "#e8f4fd",
+        desc: "Filter abhyasis by center and age range", needsCenter: true, needsDate: false, needsAge: true,
+        fetch: (cid, df, dt, p, dist, aid, ageMin, ageMax) =>
+          `${BASE}/reports_api.php?action=by-age${cid ? '&center_id=' + cid : ''}&age_min=${ageMin || 0}&age_max=${ageMax || 150}`
+      },
+      {
+        id: "by_professional", title: "Abhyasis by Profession", icon: "mdi-briefcase-outline", color: "#00b894", bg: "#e6f9f5",
+        desc: "Filter abhyasis by center and profession", needsCenter: true, needsDate: false, needsProfessional: true,
+        fetch: (cid, df, dt, p, dist, aid, ageMin, ageMax, prof) =>
+          `${BASE}/reports_api.php?action=by-professional&professional=${encodeURIComponent(prof || '')}${cid ? '&center_id=' + cid : ''}`
+      },
+      {
+        id: "individual", title: "Individual Abhyasi", icon: "mdi-account-search", color: "#6C5CE7", bg: "#f0eeff",
+        desc: "Attendance & sittings for a single abhyasi", needsCenter: true, needsDate: true, needsPreceptor: false, isIndividual: true,
+        fetch: () => null
+      },
+      {
+        id: "evt_district", title: "Events by District", icon: "mdi-map-marker-radius", color: "#e17055", bg: "#fdf0ee",
+        desc: "All events filtered by district", needsCenter: false, needsDate: false, needsDistrict: true, isEvent: true, eventMode: "district",
+        fetch: (c, df, dt, p, dist) => `${BASE}/reports_api.php?action=events&filter_by=district&district=${encodeURIComponent(dist || '')}`
+      },
+      {
+        id: "evt_daterange", title: "Events by Date Range", icon: "mdi-calendar-range", color: "#0984e3", bg: "#e8f4fd",
+        desc: "All events within a selected date range", needsCenter: false, needsDate: true, needsDistrict: false, isEvent: true, eventMode: "daterange",
+        fetch: (c, df, dt) => `${BASE}/reports_api.php?action=events&filter_by=daterange${df ? '&date_from=' + df : ''}${dt ? '&date_to=' + dt : ''}`
+      },
+      {
+        id: "evt_abhyasi", title: "Events by Abhyasi", icon: "mdi-account-star-outline", color: "#00b894", bg: "#e6f9f5",
+        desc: "All events a specific abhyasi attended", needsCenter: false, needsDate: false, needsDistrict: false, isEvent: true, eventMode: "abhyasi", needsEvtAbhyasi: true,
+        fetch: (c, df, dt, p, dist, aid) => `${BASE}/reports_api.php?action=events&filter_by=abhyasi&abhyasi_id=${aid || ''}`
+      },
+    ];
+
+    let activeReport = null;
+    let tableData = [];
+    let centers = [];
+
+    /* ── Load centers ─────────────────────────────────────────────── */
+    async function loadCenters() {
+      try {
+        centers = await fetchJSON(`${BASE}/centers_api.php`);
+        sdPopulate('centerFilter', centers.map(c => ({ value: c.center_id, label: c.center_name })), '— All Centers —');
+      } catch (e) { console.error(e); }
+    }
+
+    /* ── Load preceptors into dropdown ─────────────────────────────── */
+    async function loadPreceptorsList() {
+      try {
+        const data = await fetchJSON(`${BASE}/reports_api.php?action=preceptors-list`).catch(() => null);
+        if (!data) return;
+        sdPopulate('preceptorFilter', data.map(name => ({ value: name, label: name })), '— All Preceptors —');
+      } catch (e) { /* silent fallback */ }
+    }
+
+    /* ── Load professions into searchable dropdown ──────────────── */
+    async function loadProfessionalsList() {
+      try {
+        const data = await fetchJSON(`${BASE}/reports_api.php?action=professionals-list`).catch(() => null);
+        if (!data) return;
+        sdPopulate('professionalFilter', data.map(p => ({ value: p, label: p })), '— Select Profession —');
+      } catch (e) { /* silent */ }
+    }
+
+    /* ── Render report cards ──────────────────────────────────────── */
+    function renderCards() {
+      const grid = document.getElementById("reportGrid");
+      grid.innerHTML = REPORTS.map((r, i) => `
+        <div class="report-card" data-id="${r.id}" onclick="selectReport('${r.id}')">
+          <span class="rc-badge" style="background:${r.bg};color:${r.color};">${i + 1}</span>
+          <div class="rc-icon" style="background:${r.bg};color:${r.color};">
+            <i class="mdi ${r.icon}"></i>
+          </div>
+          <div class="rc-title">${r.title}</div>
+          <div class="rc-sub">${r.desc}</div>
+        </div>`).join("");
+    }
+
+    /* ── Select a report ──────────────────────────────────────────── */
+    window.selectReport = function (id) {
+      activeReport = REPORTS.find(r => r.id === id);
+      document.querySelectorAll(".report-card").forEach(c =>
+        c.classList.toggle("active", c.dataset.id === id));
+
+      // Show/hide filters
+      document.getElementById("centerFilterWrap").style.display =
+        activeReport.needsCenter ? "block" : "none";
+      document.getElementById("dateFilterWrap").style.display =
+        activeReport.needsDate ? "flex" : "none";
+      document.getElementById("preceptorFilterWrap").style.display =
+        activeReport.needsPreceptor ? "block" : "none";
+      if (activeReport.needsPreceptor) loadPreceptorsList();
+      document.getElementById("ageFilterWrap").style.display =
+        activeReport.needsAge ? "block" : "none";
+      document.getElementById("professionalFilterWrap").style.display =
+        activeReport.needsProfessional ? "block" : "none";
+      if (activeReport.needsProfessional) loadProfessionalsList();
+
+      // Event report filters
+      const isEvt = activeReport.isEvent || false;
+      const evtMode = activeReport.eventMode || "";
+      document.getElementById("districtFilterWrap").style.display = isEvt && evtMode === "district" ? "block" : "none";
+      document.getElementById("evtAbhyasiFilterWrap").style.display = isEvt && evtMode === "abhyasi" ? "block" : "none";
+      document.getElementById("evtAbhyasiPickWrap").style.display = isEvt && evtMode === "abhyasi" ? "block" : "none";
+      if (isEvt && evtMode === "district") loadDistrictsList();
+      if (isEvt && evtMode === "abhyasi") {
+        loadCentersForEvtAbhyasi();
+        sdOnChange('evtCenterFilter', function(val) {
+          loadAbhyasisForEvtReport(val);
+        });
+      }
+
+      // Individual report extra filters
+      const isInd = activeReport.isIndividual || false;
+      document.getElementById("abhyasiFilterWrap").style.display = isInd ? "block" : "none";
+      document.getElementById("regularFilterWrap").style.display = isInd ? "block" : "none";
+      if (isInd) {
+        // When center changes, reload abhyasi list
+        sdOnChange('centerFilter', function(val) {
+          loadAbhyasisForIndividual(val);
+        });
+        document.getElementById("regularFilter").onchange = function () {
+          filterAbhyasiDropdown();
+        };
+      } else {
+        sdOnChange('centerFilter', null);
+      }
+
+      // Hide sections when switching away
+      document.getElementById("individualSection").style.display = "none";
+      document.getElementById("tableSection").style.display = "none";
+      document.getElementById("eventSection").style.display = "none";
+
+      document.getElementById("reportTitle").textContent = activeReport.title;
+      document.getElementById("filterPanel").style.display = "flex";
+      document.getElementById("runBtn").textContent = "Run Report";
+
+      // Auto-run if no filters needed
+      if (!activeReport.needsCenter && !activeReport.needsDate && !isInd) runReport();
+    };
+
+    /* ── Run report ───────────────────────────────────────────────── */
+    window.runReport = async function () {
+      if (!activeReport) return;
+
+      // Branch: individual report
+      if (activeReport.isIndividual) { runIndividualReport(); return; }
+      // Branch: event report
+      if (activeReport.isEvent) { runEventReport(); return; }
+
+      const centerId = document.getElementById("centerFilter").value;
+      const dateFrom = document.getElementById("dateFrom").value;
+      const dateTo = document.getElementById("dateTo").value;
+      const preceptorName = document.getElementById("preceptorFilter")?.value || "";
+      const ageMin = document.getElementById("ageMin")?.value || "";
+      const ageMax = document.getElementById("ageMax")?.value || "";
+      const professional = document.getElementById("professionalFilter")?.value || "";
+      if (activeReport.needsProfessional && !professional) {
+        document.getElementById("reportError").innerHTML =
+          '<div class="alert alert-warning py-2"><i class="mdi mdi-alert-outline me-1"></i>Please select a profession.</div>';
+        return;
+      }
+      const url = activeReport.fetch(centerId, dateFrom, dateTo, preceptorName, "", "", ageMin, ageMax, professional);
+
+      document.getElementById("tableSection").style.display = "none";
+      document.getElementById("reportLoader").style.display = "block";
+      document.getElementById("reportError").innerHTML = "";
+
+      try {
+        const body = await fetchJSON(url);
+        tableData = body;
+        renderTable(body);
+      } catch (e) {
+        document.getElementById("reportError").innerHTML =
+          `<div class="alert alert-danger py-2"><i class="mdi mdi-alert-circle-outline me-1"></i>${e.message}</div>`;
+      } finally {
+        document.getElementById("reportLoader").style.display = "none";
+      }
+    };
+
+    /* ── Individual: load abhyasis for center dropdown ────────────── */
+    let _allAbhyasis = [];
+    async function loadAbhyasisForIndividual(centerId) {
+      if (!centerId) { _allAbhyasis = []; filterAbhyasiDropdown(); return; }
+      try {
+        const data = await fetchJSON(`${BASE}/abhyasis_api.php?center_id=${centerId}`);
+        _allAbhyasis = Array.isArray(data) ? data : [];
+        filterAbhyasiDropdown();
+      } catch (e) { _allAbhyasis = []; }
+    }
+    function filterAbhyasiDropdown() {
+      const reg = document.getElementById("regularFilter").value;
+      const list = reg
+        ? _allAbhyasis.filter(a => (a.is_regular_practicing || "").toLowerCase() === reg)
+        : _allAbhyasis;
+      sdPopulate('abhyasiFilter', list.map(a => {
+        const name = (a.abhyasi_name || "").trim() ||
+          ((a.first_name || "") + " " + (a.last_name || "")).trim();
+        return { value: a.abhyasi_id, label: name + (a.srcm_id ? " (" + a.srcm_id + ")" : "") };
+      }), '— Select Abhyasi —');
+    }
+
+    /* ── Individual: run and render ───────────────────────────────── */
+    let _indData = null;
+    async function runIndividualReport() {
+      const abhyasiId = document.getElementById("abhyasiFilter").value;
+      const dateFrom = document.getElementById("dateFrom").value;
+      const dateTo = document.getElementById("dateTo").value;
+      if (!abhyasiId) {
+        document.getElementById("reportError").innerHTML =
+          '<div class="alert alert-warning py-2">Please select an abhyasi.</div>';
+        return;
+      }
+      document.getElementById("individualSection").style.display = "none";
+      document.getElementById("reportLoader").style.display = "block";
+      document.getElementById("reportError").innerHTML = "";
+      try {
+        let url = `${BASE}/reports_api.php?action=individual&abhyasi_id=${abhyasiId}`;
+        if (dateFrom) url += `&date_from=${dateFrom}`;
+        if (dateTo) url += `&date_to=${dateTo}`;
+        const data = await fetchJSON(url);
+        _indData = data;
+        renderIndividual(data);
+      } catch (e) {
+        document.getElementById("reportError").innerHTML =
+          `<div class="alert alert-danger py-2"><i class="mdi mdi-alert-circle-outline me-1"></i>${e.message}</div>`;
+      } finally {
+        document.getElementById("reportLoader").style.display = "none";
+      }
+    }
+
+    function renderIndividual(d) {
+      const p = d.profile, s = d.summary;
+      const regBadge = (p.is_regular_practicing || "").toLowerCase() === "yes"
+        ? '<span class="ind-badge badge-reg">Regular</span>'
+        : (p.is_regular_practicing || "").toLowerCase() === "no"
+          ? '<span class="ind-badge badge-irr">Irregular</span>' : "";
+
+      document.getElementById("indProfileCard").innerHTML = `
+        <div class="row align-items-center">
+          <div class="col">
+            <h5 class="fw-bold mb-1">${p.abhyasi_name || ""} ${regBadge}</h5>
+            <div class="d-flex flex-wrap gap-3 mt-1" style="font-size:.85rem;opacity:.9;">
+              <span><i class="mdi mdi-card-account-details-outline me-1"></i>${p.srcm_id || "—"}</span>
+              <span><i class="mdi mdi-phone me-1"></i>${p.mobile_no || "—"}</span>
+              <span><i class="mdi mdi-email-outline me-1"></i>${p.email_id || "—"}</span>
+              <span><i class="mdi mdi-map-marker me-1"></i>${p.center_name || "—"}</span>
+            </div>
+          </div>
+        </div>`;
+
+      document.getElementById("indSummaryRow").innerHTML = `
+        <div class="col-6 col-md-3 mb-2">
+          <div class="summary-box" style="border-color:#00b894;color:#00b894;">
+            <div class="s-num">${s.attended}</div><div class="s-lbl">Attended</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <div class="summary-box" style="border-color:#d63031;color:#d63031;">
+            <div class="s-num">${s.absent}</div><div class="s-lbl">Absent</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <div class="summary-box" style="border-color:#0984e3;color:#0984e3;">
+            <div class="s-num">${s.total_att}</div><div class="s-lbl">Total Recorded</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+          <div class="summary-box" style="border-color:#4B49AC;color:#4B49AC;">
+            <div class="s-num">${s.total_sitting}</div><div class="s-lbl">Total Sittings</div>
+          </div>
+        </div>`;
+
+      document.getElementById("indAttCount").textContent =
+        `${s.attended} attended / ${s.absent} absent`;
+      document.getElementById("indAttTbody").innerHTML = d.attendance.length
+        ? d.attendance.map((r, i) => `
+            <tr>
+              <td class="text-muted small">${i + 1}</td>
+              <td class="fw-semibold">${r.date}</td>
+              <td>${r.is_attend === 1
+            ? '<span class="att-P">✓ Present</span>'
+            : r.is_attend === 0
+              ? '<span class="att-A">✗ Absent</span>'
+              : '<span class="text-muted">—</span>'}</td>
+            </tr>`).join("")
+        : '<tr><td colspan="3" class="text-center text-muted py-3">No attendance records.</td></tr>';
+
+      document.getElementById("indSitCount").textContent = `${s.total_sitting} sitting(s)`;
+      document.getElementById("indSitTbody").innerHTML = d.sittings.length
+        ? d.sittings.map((r, i) => `
+            <tr>
+              <td class="text-muted small">${i + 1}</td>
+              <td><span class="sit-pill">${r.date}</span></td>
+              <td class="fw-semibold">${r.preceptor_name || "—"}</td>
+            </tr>`).join("")
+        : '<tr><td colspan="3" class="text-center text-muted py-3">No sitting records.</td></tr>';
+
+      document.getElementById("individualSection").style.display = "block";
+    }
+
+    /* ── Individual CSV export ────────────────────────────────────── */
+    window.exportIndCSV = function () {
+      if (!_indData) return;
+      const p = _indData.profile;
+      const lines = [
+        ["Abhyasi Report"],
+        ["Name", p.abhyasi_name || ""], ["SRCM ID", p.srcm_id || ""],
+        ["Mobile", p.mobile_no || ""], ["Email", p.email_id || ""],
+        ["Center", p.center_name || ""], ["Practicing", p.is_regular_practicing || ""],
+        [], ["--- ATTENDANCE ---"], ["#", "Date", "Status"],
+        ..._indData.attendance.map((r, i) =>
+          [i + 1, r.date, r.is_attend === 1 ? "Present" : r.is_attend === 0 ? "Absent" : "—"]),
+        [], ["--- SITTINGS ---"], ["#", "Date", "Preceptor"],
+        ..._indData.sittings.map((r, i) => [i + 1, r.date, r.preceptor_name || ""])
+      ];
+      const csv = lines.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+      const a = Object.assign(document.createElement("a"), {
+        href: "data:text/csv;charset=utf-8," + encodeURIComponent(csv),
+        download: ((p.abhyasi_name || "abhyasi").replace(/\s+/g, "_")) + "_report.csv"
+      });
+      a.click();
+    };
+
+    /* ── Event reports: helper loaders ───────────────────────────── */
+    async function loadDistrictsList() {
+      try {
+        const data = await fetchJSON(`${BASE}/reports_api.php?action=districts-list`);
+        sdPopulate('districtFilter', (Array.isArray(data) ? data : []).map(d => ({ value: d, label: d })), '— All Districts —');
+      } catch (e) { console.warn("Could not load districts", e); }
+    }
+
+    async function loadCentersForEvtAbhyasi() {
+      try {
+        const data = await fetchJSON(`${BASE}/centers_api.php`);
+        sdPopulate('evtCenterFilter', (Array.isArray(data) ? data : []).map(c => ({ value: c.center_id, label: c.center_name })), '— Select Center —');
+      } catch (e) { console.warn("Could not load centers", e); }
+    }
+
+    async function loadAbhyasisForEvtReport(centerId) {
+      sdPopulate('evtAbhyasiFilter', [], '— Select Abhyasi —');
+      if (!centerId) return;
+      try {
+        const res = await fetch(`${BASE}/abhyasis_api.php?center_id=${centerId}`);
+        const data = await res.json();
+        sdPopulate('evtAbhyasiFilter', (Array.isArray(data) ? data : []).map(a => {
+          const name = (a.abhyasi_name || "").trim() ||
+            ((a.first_name || "") + " " + (a.last_name || "")).trim();
+          return { value: a.abhyasi_id, label: name + (a.srcm_id ? " (" + a.srcm_id + ")" : "") };
+        }), '— Select Abhyasi —');
+      } catch (e) { console.warn("Could not load abhyasis", e); }
+    }
+
+    /* ── Event report: run & render ───────────────────────────────── */
+    let _evtData = null;
+    async function runEventReport() {
+      const evtMode = activeReport.eventMode || "";
+      const dateFrom = document.getElementById("dateFrom").value;
+      const dateTo = document.getElementById("dateTo").value;
+      const district = document.getElementById("districtFilter")?.value || "";
+      const abhyasiId = document.getElementById("evtAbhyasiFilter")?.value || "";
+
+      if (evtMode === "abhyasi" && !abhyasiId) {
+        document.getElementById("reportError").innerHTML =
+          '<div class="alert alert-warning py-2">Please select an abhyasi.</div>';
+        return;
+      }
+
+      const url = activeReport.fetch(null, dateFrom, dateTo, null, district, abhyasiId);
+
+      document.getElementById("eventSection").style.display = "none";
+      document.getElementById("reportLoader").style.display = "block";
+      document.getElementById("reportError").innerHTML = "";
+
+      try {
+        const data = await fetchJSON(url);
+        _evtData = Array.isArray(data) ? data : [];
+        renderEventReport(_evtData);
+      } catch (e) {
+        document.getElementById("reportError").innerHTML =
+          `<div class="alert alert-danger py-2"><i class="mdi mdi-alert-circle-outline me-1"></i>${e.message}</div>`;
+      } finally {
+        document.getElementById("reportLoader").style.display = "none";
+      }
+    }
+
+    function renderEventReport(data) {
+      const section = document.getElementById("eventSection");
+      document.getElementById("evtResultCount").textContent =
+        `${data.length} event${data.length !== 1 ? "s" : ""} found`;
+
+      if (!data.length) {
+        document.getElementById("evtReportTbody").innerHTML =
+          '<tr><td colspan="7" class="text-center text-muted py-4">No events found.</td></tr>';
+        section.style.display = "block";
+        return;
+      }
+
+      document.getElementById("evtReportTbody").innerHTML = data.map((e, i) => {
+        const dateStr = (e.event_date || "").length === 10 ? e.event_date
+          : new Date(e.event_date).toISOString().split("T")[0];
+        return `<tr>
+          <td class="text-muted small">${i + 1}</td>
+          <td class="fw-semibold" style="color:#4B49AC;">${e.event_name || ""}</td>
+          <td><span style="background:#f0eeff;color:#4B49AC;border:1px solid #4B49AC40;border-radius:20px;
+            padding:1px 9px;font-size:.72rem;font-weight:600;">${dateStr}</span></td>
+          <td>${e.location || '<span class="text-muted">—</span>'}</td>
+          <td>${e.district || '<span class="text-muted">—</span>'}</td>
+          <td class="text-center fw-semibold">${e.total_registered ?? e.registered_count ?? (e.no_of_attendancies ?? '—')}</td>
+          <td style="max-width:340px;line-height:1.8;">${(e.abhyasi_names || e.abhyasi_name)
+            ? (e.abhyasi_names || e.abhyasi_name).split(', ').map(n => n.trim()).filter(Boolean)
+                .map(n => `<span style="display:inline-block;background:#f0eeff;color:#4B49AC;
+                  border:1px solid #c8c7f5;border-radius:20px;padding:1px 9px;
+                  font-size:.72rem;font-weight:600;margin:1px 2px;">${n}</span>`).join('')
+            : '<span class="text-muted">—</span>'}</td>
+        </tr>`;
+      }).join("");
+      section.style.display = "block";
+    }
+
+    /* ── Event CSV export ──────────────────────────────────────────── */
+    window.exportEvtCSV = function () {
+      if (!_evtData) return;
+      const rows = [
+        ["#", "Event Name", "Date", "Location", "District", "Registered", "Abhyasis"],
+        ..._evtData.map((e, i) => [
+          i + 1, e.event_name || "",
+          (e.event_date || "").length === 10 ? e.event_date : new Date(e.event_date).toISOString().split("T")[0],
+          e.location || "", e.district || "",
+          e.total_registered ?? e.registered_count ?? (e.no_of_attendancies ?? ""),
+          e.abhyasi_names || e.abhyasi_name || ""
+        ])
+      ];
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+      const a = Object.assign(document.createElement("a"), {
+        href: "data:text/csv;charset=utf-8," + encodeURIComponent(csv),
+        download: "event_report.csv"
+      });
+      a.click();
+    };
+
+    /* ── Render table ─────────────────────────────────────────────── */
+    function renderTable(data) {
+      const hasDate = activeReport.needsDate;
+      const isSitting = activeReport.isSitting || false;
+      const isMissing = activeReport.isMissingDetails || false;
+      const section = document.getElementById("tableSection");
+      document.getElementById("resultCount").textContent =
+        `${data.length} record${data.length !== 1 ? "s" : ""} found`;
+
+      // ── Missing Details: special layout ─────────────────────────
+      if (isMissing) {
+        document.getElementById("reportThead").innerHTML = `
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>Abhyasi Name</th>
+            <th>SRCM ID</th>
+            <th>Mobile</th>
+            <th>Email ID</th>
+            <th>Professional</th>
+            <th>Age</th>
+            <th>Center Name</th>
+          </tr>`;
+        const miss = v => !v || String(v).trim() === '';
+        const redCell = v => miss(v)
+          ? `<span class="badge" style="background:#fdecea;color:#d63031;border:1px solid #f5c6c3;border-radius:6px;padding:2px 8px;font-size:.75rem;">Missing</span>`
+          : v;
+        if (!data.length) {
+          document.getElementById("reportTbody").innerHTML =
+            '<tr><td colspan="8" class="text-center text-muted py-4">No records with missing details found.</td></tr>';
+          section.style.display = "block";
+          return;
+        }
+        document.getElementById("reportTbody").innerHTML = data.map((r, i) => `
+          <tr>
+            <td class="text-muted small">${i + 1}</td>
+            <td class="fw-semibold">${r.abhyasi_name || ""}</td>
+            <td>${redCell(r.srcm_id)}</td>
+            <td>${redCell(r.mobile_no)}</td>
+            <td>${redCell(r.email_id)}</td>
+            <td>${redCell(r.professional)}</td>
+            <td>${redCell(r.age)}</td>
+            <td>${r.center_name || ""}</td>
+          </tr>`).join("");
+        section.style.display = "block";
+        return;
+      }
+
+      // ── Standard table with Professional column ──────────────────
+      let extraCols = "";
+      if (isSitting) {
+        extraCols = "<th>Preceptor</th><th>Sitting Dates</th><th class='text-center'>Count</th>";
+      } else if (hasDate) {
+        extraCols = "<th>Satsang Dates</th>";
+      }
+      const totalCols = 7 + (isSitting ? 3 : hasDate ? 1 : 0);
+      document.getElementById("reportThead").innerHTML = `
+        <tr>
+          <th style="width:40px;">#</th>
+          <th>Abhyasi Name</th>
+          <th>SRCM ID</th>
+          <th>Mobile</th>
+          <th>Email ID</th>
+          <th>Professional</th>
+          <th>Center Name</th>
+          ${extraCols}
+        </tr>`;
+
+      if (!data.length) {
+        document.getElementById("reportTbody").innerHTML =
+          `<tr><td colspan="${totalCols}" class="text-center text-muted py-4">No records found.</td></tr>`;
+        section.style.display = "block";
+        return;
+      }
+
+      document.getElementById("reportTbody").innerHTML = data.map((r, i) => `
+        <tr>
+          <td class="text-muted small">${i + 1}</td>
+          <td class="fw-semibold">${r.abhyasi_name || ""}</td>
+          <td>${r.srcm_id || '<span class="text-danger small">—</span>'}</td>
+          <td>${r.mobile_no || '<span class="text-danger small">—</span>'}</td>
+          <td>${r.email_id || '<span class="text-muted small">—</span>'}</td>
+          <td>${r.professional || '<span class="text-muted small">—</span>'}</td>
+          <td>${r.center_name || ""}</td>
+          ${isSitting
+          ? `<td>${r.preceptor_name || '<span class="text-muted small">—</span>'}</td>
+               <td>${formatDates(r.sitting_dates)}</td>
+               <td class="text-center fw-semibold">${r.sitting_count || 0}</td>`
+          : hasDate
+            ? `<td>${formatDates(r.satsang_dates)}</td>`
+            : ""
+        }
+        </tr>`).join("");
+      section.style.display = "block";
+    }
+
+    /* ── Format dates as coloured badges ─────────────────────────── */
+    const DATE_COLORS = [
+      { bg: "#e8f4fd", color: "#0984e3" }, { bg: "#e6f9f5", color: "#00b894" },
+      { bg: "#f0eeff", color: "#6C5CE7" }, { bg: "#fdf0ee", color: "#e17055" },
+      { bg: "#fef9ec", color: "#d4a017" }, { bg: "#fdecea", color: "#d63031" },
+      { bg: "#eefaf3", color: "#00897b" }, { bg: "#fff3e0", color: "#e65100" },
+    ];
+    function formatDates(datesStr) {
+      if (!datesStr) return "";
+      return datesStr.split(", ").map((d, i) => {
+        const c = DATE_COLORS[i % DATE_COLORS.length];
+        return `<span style="display:inline-block;background:${c.bg};color:${c.color};border:1px solid ${c.color}40;
+          border-radius:20px;padding:1px 9px;font-size:.72rem;font-weight:600;margin:2px 2px;">${d.trim()}</span>`;
+      }).join("");
+    }
+
+    /* ── Search ───────────────────────────────────────────────────── */
+    document.getElementById("tableSearch").addEventListener("input", function () {
+      const q = this.value.trim().toLowerCase();
+      if (!q) { renderTable(tableData); return; }
+      renderTable(tableData.filter(r =>
+        (r.abhyasi_name || "").toLowerCase().includes(q) ||
+        (r.srcm_id || "").toLowerCase().includes(q) ||
+        (r.mobile_no || "").toLowerCase().includes(q) ||
+        (r.email_id || "").toLowerCase().includes(q) ||
+        (r.center_name || "").toLowerCase().includes(q) ||
+        (r.professional || "").toLowerCase().includes(q)
+      ));
+    });
+
+    /* ── Export CSV ───────────────────────────────────────────────── */
+    document.getElementById("exportBtn").addEventListener("click", function () {
+      if (!tableData.length) return;
+      const hasDate = activeReport?.needsDate;
+      const isSitting = activeReport?.isSitting || false;
+      const isMissing = activeReport?.isMissingDetails || false;
+      let headers, rows;
+      if (isMissing) {
+        headers = ["#", "Abhyasi Name", "SRCM ID", "Mobile", "Email ID", "Professional", "Age", "Center Name"];
+        rows = tableData.map((r, i) => [
+          i + 1, r.abhyasi_name || "", r.srcm_id || "", r.mobile_no || "",
+          r.email_id || "", r.professional || "", r.age || "", r.center_name || ""
+        ]);
+      } else {
+        headers = ["#", "Abhyasi Name", "SRCM ID", "Mobile", "Email ID", "Professional", "Center Name"];
+        if (isSitting) { headers.push("Preceptor", "Sitting Dates", "Count"); }
+        else if (hasDate) { headers.push("Satsang Dates"); }
+        rows = tableData.map((r, i) => [
+          i + 1, r.abhyasi_name || "", r.srcm_id || "", r.mobile_no || "",
+          r.email_id || "", r.professional || "", r.center_name || "",
+          ...(isSitting ? [r.preceptor_name || "", r.sitting_dates || "", r.sitting_count || 0] : hasDate ? [r.satsang_dates || ""] : [])
+        ]);
+      }
+      const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+      const a = document.createElement("a");
+      a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+      a.download = (activeReport?.title || "report").replace(/\s+/g, "_") + ".csv";
+      a.click();
+    });
+
+    /* ── Print ────────────────────────────────────────────────────── */
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    /* ── Init ─────────────────────────────────────────────────────── */
+    loadCenters();
+    loadPreceptorsList();
+    renderCards();
+  });
+</script>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+        </div>
+        <div>
+          <a class="navbar-brand brand-logo" href="../../index.html">
+            <img src="../../assets/images/logo.svg" alt="logo" />
+          </a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html">
+            <img src="../../assets/images/logo-mini.svg" alt="logo" />
+          </a>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+          <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+            <h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">John Doe</span></h1>
+            <h3 class="welcome-sub-text">Your performance summary this week </h3>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown d-none d-lg-block">
+            <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#"
+              data-bs-toggle="dropdown" aria-expanded="false"> Select Category </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="messageDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">Select category</p>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Bootstrap Bundle </p>
+                  <p class="fw-light small-text mb-0">This is a Bundle featuring 16 unique dashboards</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Angular Bundle</p>
+                  <p class="fw-light small-text mb-0">Everything you’ll ever need for your Angular projects</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">VUE Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 6 Premium Vue Admin Dashboard</p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">React Bundle</p>
+                  <p class="fw-light small-text mb-0">Bundle of 8 Premium React Admin Dashboard</p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item d-none d-lg-block">
+            <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
+              <span class="input-group-addon input-group-prepend border-right">
+                <span class="icon-calendar input-group-text calendar-icon"></span>
+              </span>
+              <input type="text" class="form-control">
+            </div>
+          </li>
+          <li class="nav-item">
+            <form class="search-form" action="#">
+              <i class="icon-search"></i>
+              <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+            </form>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+              <i class="icon-bell"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="notificationDropdown">
+              <a class="dropdown-item py-3 border-bottom">
+                <p class="mb-0 fw-medium float-start">You have 4 new notifications </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-alert m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
+                  <p class="fw-light small-text mb-0"> Just now </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-lock-outline m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
+                  <p class="fw-light small-text mb-0"> Private message </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item py-3">
+                <div class="preview-thumbnail">
+                  <i class="mdi mdi-airballoon m-auto text-primary"></i>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
+                  <p class="fw-light small-text mb-0"> 2 days ago </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="icon-mail icon-lg"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+              aria-labelledby="countDropdown">
+              <a class="dropdown-item py-3">
+                <p class="mb-0 fw-medium float-start">You have 7 unread mails </p>
+                <span class="badge badge-pill badge-primary float-end">View all</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face10.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Marian Garner </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face12.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">David Grey </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="../../assets/images/faces/face1.jpg" alt="image" class="img-sm profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow py-2">
+                  <p class="preview-subject ellipsis fw-medium text-dark">Travis Jenkins </p>
+                  <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <!-- TS12-AUTH: user widget injected by ts12-auth.js -->
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-bs-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../../index.html">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Heartfulness</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="menu-icon mdi mdi-floor-plan"></i>
+              <span class="menu-title">Satsang</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-attendance.html">Sunday
+                    Attendance</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false"
+              aria-controls="form-elements">
+              <i class="menu-icon mdi mdi-card-text-outline"></i>
+              <span class="menu-title">Sitting</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="../../pages/tables/view-sitting.html">Individual
+                    Sitting</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+              <i class="menu-icon mdi mdi-table"></i>
+              <span class="menu-title">Centers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-centers.html">Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-subcenters.html">Sub
+                    Centers</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-abhyasis.html">Abhyasis</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-volunteer-works.html">Volunteer
+                    Details</a>
+                </li>
+                <li class="nav-item"> <a class="nav-link"
+                    href="../../pages/tables/view-volunteer-work-abhyasi.html">Volunteer Work Abhyasi</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+              <i class="menu-icon mdi mdi-layers-outline"></i>
+              <span class="menu-title">Reports</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="icons">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-reports.html">All Reports</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#nav-events" aria-expanded="false"
+              aria-controls="nav-events">
+              <i class="menu-icon mdi mdi-file-document"></i>
+              <span class="menu-title">Events</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="nav-events">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/view-events.html">All Events</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-lg-12">
+
+              <!-- ── Page header ── -->
+              <div class="d-flex align-items-center justify-content-between mb-3 no-print">
+                <div>
+                  <h4 class="fw-bold mb-0" style="color:#4B49AC;">
+                    <i class="mdi mdi-chart-bar me-2"></i>Reports
+                  </h4>
+                  <p class="text-muted small mb-0 mt-1">Select a report below to view and export data</p>
+                </div>
+              </div>
+
+              <!-- ── Report cards grid ── -->
+              <div class="card mb-3 no-print">
+                <div class="card-body pb-3">
+                  <div id="reportGrid" class="report-grid"></div>
+                </div>
+              </div>
+
+              <!-- ── Filter panel ── -->
+              <div id="filterPanel" class="filter-bar mb-3 no-print"
+                style="display:none; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
+                <div id="centerFilterWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">CENTER</label>
+                  <div class="sd-wrap" id="sdWrap_centerFilter">
+                    <div class="sd-input-row" onclick="sdToggle('centerFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_centerFilter">— All Centers —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search center…" id="sdSearch_centerFilter"
+                               oninput="sdFilter('centerFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_centerFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="centerFilter" value="">
+                </div>
+                <div id="preceptorFilterWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">PRECEPTOR</label>
+                  <div class="sd-wrap" id="sdWrap_preceptorFilter">
+                    <div class="sd-input-row" onclick="sdToggle('preceptorFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_preceptorFilter">— All Preceptors —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search preceptor…" id="sdSearch_preceptorFilter"
+                               oninput="sdFilter('preceptorFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_preceptorFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="preceptorFilter" value="">
+                </div>
+                <div id="dateFilterWrap" style="display:none; gap:.75rem; align-items:flex-end;">
+                  <div>
+                    <label class="form-label fw-semibold text-muted small mb-1">DATE FROM</label>
+                    <input type="date" id="dateFrom" class="form-control form-control-sm" style="min-width:150px;">
+                  </div>
+                  <div>
+                    <label class="form-label fw-semibold text-muted small mb-1">DATE TO</label>
+                    <input type="date" id="dateTo" class="form-control form-control-sm" style="min-width:150px;">
+                  </div>
+                </div>
+                <div id="districtFilterWrap" style="display:none; min-width:200px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">DISTRICT</label>
+                  <div class="sd-wrap" id="sdWrap_districtFilter">
+                    <div class="sd-input-row" onclick="sdToggle('districtFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_districtFilter">— All Districts —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search district…" id="sdSearch_districtFilter"
+                               oninput="sdFilter('districtFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_districtFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="districtFilter" value="">
+                </div>
+                <div id="evtAbhyasiFilterWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">CENTER <span
+                      class="text-danger">*</span></label>
+                  <div class="sd-wrap" id="sdWrap_evtCenterFilter">
+                    <div class="sd-input-row" onclick="sdToggle('evtCenterFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_evtCenterFilter">— Select Center —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search center…" id="sdSearch_evtCenterFilter"
+                               oninput="sdFilter('evtCenterFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_evtCenterFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="evtCenterFilter" value="">
+                </div>
+                <div id="evtAbhyasiPickWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">ABHYASI <span
+                      class="text-danger">*</span></label>
+                  <div class="sd-wrap" id="sdWrap_evtAbhyasiFilter">
+                    <div class="sd-input-row" onclick="sdToggle('evtAbhyasiFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_evtAbhyasiFilter">— Select Abhyasi —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search name or SRCM ID…" id="sdSearch_evtAbhyasiFilter"
+                               oninput="sdFilter('evtAbhyasiFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_evtAbhyasiFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="evtAbhyasiFilter" value="">
+                </div>
+                <div id="abhyasiFilterWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">ABHYASI <span
+                      class="text-danger">*</span></label>
+                  <div class="sd-wrap" id="sdWrap_abhyasiFilter">
+                    <div class="sd-input-row" onclick="sdToggle('abhyasiFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_abhyasiFilter">— Select Abhyasi —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search by name or SRCM ID…" id="sdSearch_abhyasiFilter"
+                               oninput="sdFilter('abhyasiFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_abhyasiFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="abhyasiFilter" value="">
+                </div>
+                <div id="regularFilterWrap" style="display:none; min-width:180px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">PRACTICING</label>
+                  <select id="regularFilter" class="form-select form-select-sm">
+                    <option value="">— All —</option>
+                    <option value="yes">Regular (Yes)</option>
+                    <option value="no">Irregular (No)</option>
+                  </select>
+                </div>
+                <!-- Age range filter -->
+                <div id="ageFilterWrap" style="display:none; min-width:200px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">AGE RANGE</label>
+                  <div class="d-flex gap-2 align-items-center">
+                    <input type="number" id="ageMin" class="form-control form-control-sm" placeholder="Min" min="0" max="150" style="width:80px;">
+                    <span class="text-muted">–</span>
+                    <input type="number" id="ageMax" class="form-control form-control-sm" placeholder="Max" min="0" max="150" style="width:80px;">
+                  </div>
+                </div>
+                <!-- Professional filter -->
+                <div id="professionalFilterWrap" style="display:none; min-width:220px;">
+                  <label class="form-label fw-semibold text-muted small mb-1">PROFESSION</label>
+                  <div class="sd-wrap" id="sdWrap_professionalFilter">
+                    <div class="sd-input-row" onclick="sdToggle('professionalFilter')">
+                      <span class="sd-display placeholder" id="sdDisplay_professionalFilter">— Select Profession —</span>
+                      <span class="sd-chevron">▼</span>
+                    </div>
+                    <div class="sd-panel">
+                      <div class="sd-search-box">
+                        <input type="text" placeholder="Search profession…" id="sdSearch_professionalFilter"
+                               oninput="sdFilter('professionalFilter')" onclick="event.stopPropagation()">
+                      </div>
+                      <div class="sd-list" id="sdList_professionalFilter"></div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="professionalFilter" value="">
+                </div>
+                <div style="padding-top:1.4rem;">
+                  <button id="runBtn" class="btn btn-sm text-white px-4" style="background:#4B49AC;"
+                    onclick="runReport()">
+                    <i class="mdi mdi-play me-1"></i>Run Report
+                  </button>
+                </div>
+              </div>
+
+              <div id="reportError"></div>
+              <div id="reportLoader" style="display:none;" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <div class="text-muted mt-2 small">Loading report…</div>
+              </div>
+
+              <!-- ── Table section ── -->
+              <div id="tableSection" style="display:none;" class="card">
+                <div class="card-body">
+                  <div class="toolbar no-print">
+                    <div class="d-flex align-items-center gap-3">
+                      <h6 class="fw-bold mb-0" id="reportTitle" style="color:#4B49AC;"></h6>
+                      <span id="resultCount" class="result-count"></span>
+                    </div>
+                    <div class="d-flex gap-2">
+                      <div class="input-group" style="max-width:260px;">
+                        <span class="input-group-text bg-white border-end-0">
+                          <i class="mdi mdi-magnify" style="color:#4B49AC;"></i>
+                        </span>
+                        <input id="tableSearch" type="text" class="form-control border-start-0 ps-0"
+                          placeholder="Search results…" style="box-shadow:none;">
+                      </div>
+                      <button id="exportBtn" class="btn btn-sm btn-outline-success" title="Export CSV">
+                        <i class="mdi mdi-microsoft-excel me-1"></i>CSV
+                      </button>
+                      <button id="printBtn" class="btn btn-sm btn-outline-secondary" title="Print">
+                        <i class="mdi mdi-printer me-1"></i>Print
+                      </button>
+                    </div>
+                  </div>
+                  <div class="table-wrap">
+                    <table class="table table-bordered table-sm mb-0" id="reportTable">
+                      <thead id="reportThead"></thead>
+                      <tbody id="reportTbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Individual Report Section ── -->
+              <!-- ── Event Report Section ── -->
+              <div id="eventSection" style="display:none;" class="card mt-3">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="mdi mdi-calendar-star" style="color:#4B49AC;font-size:1.2rem;"></i>
+                      <h6 class="mb-0 fw-bold" style="color:#4B49AC;">Event Report</h6>
+                      <span id="evtResultCount" class="text-muted small"></span>
+                    </div>
+                    <div class="d-flex gap-2 no-print">
+                      <button onclick="exportEvtCSV()" class="btn btn-sm btn-outline-success">
+                        <i class="mdi mdi-microsoft-excel me-1"></i>CSV
+                      </button>
+                      <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">
+                        <i class="mdi mdi-printer me-1"></i>Print
+                      </button>
+                    </div>
+                  </div>
+                  <div style="max-height:480px;overflow-y:auto;border-radius:8px;border:1px solid #e0e0f5;">
+                    <table class="table table-bordered table-sm mb-0 report-table" style="min-width:520px;">
+                      <thead>
+                        <tr>
+                          <th style="width:40px;">#</th>
+                          <th>Event Name</th>
+                          <th>Date</th>
+                          <th>Location</th>
+                          <th>District</th>
+                          <th class="text-center">Registered</th>
+                          <th>Abhyasis</th>
+                        </tr>
+                      </thead>
+                      <tbody id="evtReportTbody">
+                        <tr>
+                          <td colspan="7" class="text-center text-muted py-4">Run a report to see events.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div id="individualSection" style="display:none;">
+
+                <div class="profile-card-ind mb-3" id="indProfileCard"></div>
+
+                <div class="row mb-3" id="indSummaryRow"></div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-2 pb-2" style="border-bottom:2px solid #eee;">
+                          <i class="mdi mdi-calendar-check" style="color:#4B49AC;font-size:1.2rem;"></i>
+                          <h6 class="mb-0 fw-bold" style="color:#4B49AC;">Satsang Attendance</h6>
+                          <span id="indAttCount" class="text-muted small ms-1"></span>
+                        </div>
+                        <div class="ind-tbl-wrap">
+                          <table class="table table-bordered table-sm mb-0 ind-tbl">
+                            <thead>
+                              <tr>
+                                <th style="width:36px;">#</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody id="indAttTbody"></tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-2 pb-2" style="border-bottom:2px solid #eee;">
+                          <i class="mdi mdi-meditation" style="color:#4B49AC;font-size:1.2rem;"></i>
+                          <h6 class="mb-0 fw-bold" style="color:#4B49AC;">Sitting History</h6>
+                          <span id="indSitCount" class="text-muted small ms-1"></span>
+                        </div>
+                        <div class="ind-tbl-wrap">
+                          <table class="table table-bordered table-sm mb-0 ind-tbl">
+                            <thead>
+                              <tr>
+                                <th style="width:36px;">#</th>
+                                <th>Date</th>
+                                <th>Preceptor</th>
+                              </tr>
+                            </thead>
+                            <tbody id="indSitTbody"></tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-end mb-3 no-print">
+                  <button onclick="exportIndCSV()" class="btn btn-sm btn-outline-success me-2">
+                    <i class="mdi mdi-microsoft-excel me-1"></i>CSV
+                  </button>
+                  <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">
+                    <i class="mdi mdi-printer me-1"></i>Print
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <footer class="footer no-print">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
+                href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from
+              BootstrapDash.</span>
+            <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights
+              reserved.</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+  <script src="../../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+  <script src="../../assets/js/off-canvas.js"></script>
+  <script src="../../assets/js/template.js"></script>
+  <script src="../../assets/js/settings.js"></script>
+  <script src="../../assets/js/hoverable-collapse.js"></script>
+  <script src="../../assets/js/todolist.js"></script>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:11000">
+    <div id="appToast" class="toast align-items-center border-0" role="alert" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body fw-semibold"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+  <script>
+
+    (function () {
+      "use strict";
+
+      /* ── 1. Read session ── */
+      var session = null;
+      try { session = JSON.parse(localStorage.getItem("ts12_user") || "null"); } catch (e) { }
+
+      var path = window.location.pathname;
+      var page = (path.split("/").pop() || "index.html").split("?")[0];
+      var inTables = path.indexOf("/pages/tables/") !== -1;
+      var loginUrl = inTables ? "../../login.html" : "login.html";
+      var indexUrl = inTables ? "../../index.html" : "index.html";
+
+      /* ── 2. No session → redirect to login ── */
+      if (!session || !session.srcm_id) {
+        window.location.replace(loginUrl);
+        return;
+      }
+
+      var FULL_ROLES = ["zc", "cc", "dc", "nc"];   /* NC gets full access */
+      var DELETE_ROLES = ["zc", "dc"];
+
+      var roles = (session.roles || []).map(function (r) { return r.toLowerCase().trim(); });
+
+      /* Always re-derive from roles[] - never trust the cached localStorage value.
+         This ensures NC (and any other role) always gets the correct access level. */
+      var roleLevel = roles.some(function (r) { return FULL_ROLES.indexOf(r) !== -1; }) ? "full" : "preceptor";
+      var canDelete = roles.some(function (r) { return DELETE_ROLES.indexOf(r) !== -1; });
+
+      /* Write corrected values back so they stay consistent */
+      session.roleLevel = roleLevel;
+      session.canDelete = canDelete;
+      try { localStorage.setItem("ts12_user", JSON.stringify(session)); } catch (e) { }
+
+      /* ── 3. Preceptor page guard ── */
+      var adminPages = ["view-abhyasis.html", "view-centers.html", "view-subcenters.html",
+        "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+      if (roleLevel === "preceptor" && adminPages.indexOf(page) !== -1) {
+        window.location.replace(indexUrl);
+        return;
+      }
+
+      /* ── 4. Build user dropdown HTML ── */
+      function buildUserMenu() {
+        var initial = (session.name || "?").charAt(0).toUpperCase();
+        var badges = (session.roles || []).map(function (r) {
+          return '<span style="display:inline-block;font-size:.58rem;font-weight:700;padding:1px 7px;'
+            + 'border-radius:20px;background:rgba(255,255,255,.25);color:#fff;'
+            + 'border:1px solid rgba(255,255,255,.4);text-transform:uppercase;margin:1px;">' + r + '</span>';
+        }).join("");
+        var access = canDelete
+          ? '<span style="color:#00b894;font-weight:600;">Full Access + Delete</span>'
+          : roleLevel === "full"
+            ? '<span style="color:#4B49AC;font-weight:600;">Full Access</span>'
+            : '<span style="color:#e17055;font-weight:600;">Limited Access</span>';
+
+        return ''
+          + '<li class="nav-item dropdown d-none d-lg-block" id="ts12UserMenu">'
+          + '<a class="nav-link" href="#" data-bs-toggle="dropdown" aria-expanded="false" style="padding:8px 6px;">'
+          + '<div style="width:34px;height:34px;border-radius:50%;'
+          + 'background:linear-gradient(135deg,#4B49AC,#7b79d4);'
+          + 'display:flex;align-items:center;justify-content:center;'
+          + 'color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;'
+          + 'box-shadow:0 2px 8px rgba(75,73,172,.4);">' + initial + '</div></a>'
+          + '<div class="dropdown-menu dropdown-menu-right navbar-dropdown" '
+          + 'style="min-width:230px;border-radius:14px;overflow:hidden;'
+          + 'box-shadow:0 8px 32px rgba(75,73,172,.2);border:1px solid #e4e4f5;padding:0;">'
+          /* Header */
+          + '<div style="background:linear-gradient(135deg,#4B49AC,#7b79d4);padding:1rem;text-align:center;">'
+          + '<div style="width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.22);'
+          + 'display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;'
+          + 'font-size:1.5rem;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.4);">'
+          + initial + '</div>'
+          + '<p style="margin:0;font-weight:700;color:#fff;font-size:.9rem;">' + (session.name || "") + '</p>'
+          + '<p style="margin:2px 0 6px;color:rgba(255,255,255,.75);font-size:.7rem;">' + session.srcm_id + '</p>'
+          + '<div>' + badges + '</div></div>'
+          /* Access */
+          + '<div style="padding:.5rem .9rem;border-bottom:1px solid #eef;font-size:.76rem;'
+          + 'display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-shield-check-outline" style="color:#4B49AC;"></i>' + access + '</div>'
+          /* Sign Out */
+          + '<a class="dropdown-item" onclick="ts12Logout()" '
+          + 'style="cursor:pointer;color:#d63031;font-size:.82rem;padding:.6rem .9rem;display:flex;align-items:center;gap:.4rem;">'
+          + '<i class="mdi mdi-logout" style="font-size:1rem;"></i> Sign Out</a>'
+          + '</div></li>';
+      }
+
+      /* ── 5. Replace Login button with user menu ── */
+      function renderUserMenu() {
+        /* Hide/remove the Login button */
+        var loginLi = document.getElementById("ts12LoginNavItem");
+        if (loginLi) loginLi.remove();
+
+        /* Remove any old user menu */
+        var old = document.getElementById("ts12UserMenu");
+        if (old) old.remove();
+
+        /* Find the right <ul> and append */
+        var ul = document.querySelector(".navbar-menu-wrapper .navbar-nav.ms-auto");
+        if (ul) {
+          ul.insertAdjacentHTML("beforeend", buildUserMenu());
+        }
+      }
+
+      /* ── 6. Hide preceptor-restricted sidebar links ── */
+      function hideSidebarLinks() {
+        if (roleLevel === "full") return;
+        var restricted = ["view-centers.html", "view-subcenters.html", "view-abhyasis.html",
+          "view-volunteer-works.html", "view-volunteer-work-abhyasi.html"];
+        document.querySelectorAll("#sidebar a, .sidebar a").forEach(function (a) {
+          var href = (a.getAttribute("href") || "").split("/").pop().split("?")[0];
+          if (restricted.indexOf(href) !== -1) {
+            var li = a.closest("li");
+            if (li) li.style.display = "none";
+          }
+        });
+        /* Hide empty parent collapse items */
+        document.querySelectorAll("#sidebar .collapse, .sidebar .collapse").forEach(function (col) {
+          var vis = Array.from(col.querySelectorAll("li.nav-item")).filter(function (li) {
+            return li.style.display !== "none";
+          });
+          if (!vis.length && col.querySelectorAll("li.nav-item").length) {
+            var par = col.closest("li.nav-item");
+            if (par) par.style.display = "none";
+          }
+        });
+      }
+
+      /* ── 7. Disable delete buttons for non-ZC/DC ── */
+      var TIP = "Delete is restricted to ZC and DC roles only";
+      function lockDeleteButtons() {
+        if (canDelete) return;
+        function lock(btn) {
+          if (!btn || btn._ts12locked) return;
+          btn._ts12locked = true;
+          btn.disabled = true;
+          btn.title = TIP;
+          btn.style.cssText += ";opacity:0.3!important;cursor:not-allowed!important;pointer-events:none!important;";
+        }
+        document.querySelectorAll(".btn-outline-danger,.row-del,.img-del-btn").forEach(lock);
+        var conf = document.getElementById("confirmDeleteBtn");
+        if (conf) lock(conf);
+        if (!window._ts12NoDel) {
+          window._ts12NoDel = true;
+          var no = function () { alert(TIP); return false; };
+          window.openDeleteModal = no; window.deleteEvent = no;
+          window.removeAbhyasi = no; window.deleteImage = no;
+        }
+      }
+
+      /* ── 8. Globals ── */
+      window.ts12User = session; window.ts12Roles = roles;
+      window.ts12RoleLevel = roleLevel; window.ts12CanDelete = canDelete;
+      window.ts12Logout = function () {
+        localStorage.removeItem("ts12_user");
+        window.location.replace(loginUrl);
+      };
+
+      /* ── 9. Boot ── */
+      function boot() {
+        renderUserMenu();
+        hideSidebarLinks();
+        lockDeleteButtons();
+        setTimeout(lockDeleteButtons, 600);
+        setTimeout(lockDeleteButtons, 1800);
+        var obs = new MutationObserver(lockDeleteButtons);
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+      } else {
+        setTimeout(boot, 0);  /* yield to let DOM settle */
+      }
+
+    })();
+
+  </script>
+  <!-- ── Searchable Dropdown Engine ─────────────────────────────── -->
+  <script>
+  (function () {
+    "use strict";
+
+    /* Registry: id → { options, placeholder, onChange } */
+    var _sdReg = {};
+
+    /* ── sdPopulate(id, [{value, label}], placeholder) ────────────
+       Rebuilds the option list and resets the selection.            */
+    window.sdPopulate = function (id, options, placeholder) {
+      _sdReg[id] = _sdReg[id] || {};
+      _sdReg[id].options     = options || [];
+      _sdReg[id].placeholder = placeholder || '— Select —';
+
+      var list = document.getElementById('sdList_' + id);
+      var hidden = document.getElementById(id);
+      if (!list || !hidden) return;
+
+      list.innerHTML = '';
+
+      /* "All / none" option */
+      var allEl = document.createElement('div');
+      allEl.className = 'sd-option selected';
+      allEl.dataset.value = '';
+      allEl.dataset.label = placeholder || '— Select —';
+      allEl.textContent   = placeholder || '— Select —';
+      allEl.onclick = function () { sdSelect(id, '', allEl.dataset.label); };
+      list.appendChild(allEl);
+
+      options.forEach(function (opt) {
+        var el = document.createElement('div');
+        el.className   = 'sd-option';
+        el.dataset.value = String(opt.value);
+        el.dataset.label = opt.label;
+        el.textContent   = opt.label;
+        el.onclick = function () { sdSelect(id, String(opt.value), opt.label); };
+        list.appendChild(el);
+      });
+
+      /* Reset display and value */
+      sdSelect(id, '', placeholder || '— Select —', true);
+    };
+
+    /* ── sdSelect(id, value, label, silent) ───────────────────────
+       Sets the hidden input, updates display text, marks selected,
+       fires onChange callback (unless silent=true).               */
+    function sdSelect(id, value, label, silent) {
+      var hidden  = document.getElementById(id);
+      var display = document.getElementById('sdDisplay_' + id);
+      var wrap    = document.getElementById('sdWrap_' + id);
+      if (!hidden || !display) return;
+
+      hidden.value = value;
+
+      var isBlank = (value === '' || value === null || value === undefined);
+      display.textContent = label;
+      display.classList.toggle('placeholder', isBlank);
+
+      /* Mark selected option */
+      var list = document.getElementById('sdList_' + id);
+      if (list) {
+        list.querySelectorAll('.sd-option').forEach(function (el) {
+          el.classList.toggle('selected', el.dataset.value === String(value));
+        });
+      }
+
+      /* Close panel */
+      if (wrap) wrap.classList.remove('open');
+
+      /* Fire callback */
+      if (!silent && _sdReg[id] && _sdReg[id].onChange) {
+        _sdReg[id].onChange(value);
+      }
+    }
+
+    /* ── sdToggle(id) ─────────────────────────────────────────────
+       Opens / closes the dropdown panel. Closes all others first. */
+    window.sdToggle = function (id) {
+      var wrap = document.getElementById('sdWrap_' + id);
+      if (!wrap) return;
+      var wasOpen = wrap.classList.contains('open');
+
+      /* Close all open dropdowns */
+      document.querySelectorAll('.sd-wrap.open').forEach(function (el) {
+        el.classList.remove('open');
+      });
+
+      if (!wasOpen) {
+        wrap.classList.add('open');
+        /* Focus search input */
+        var inp = document.getElementById('sdSearch_' + id);
+        if (inp) { inp.value = ''; sdFilter(id); setTimeout(function () { inp.focus(); }, 30); }
+      }
+    };
+
+    /* ── sdFilter(id) ─────────────────────────────────────────────
+       Filters visible options by the search query.                */
+    window.sdFilter = function (id) {
+      var inp  = document.getElementById('sdSearch_' + id);
+      var list = document.getElementById('sdList_' + id);
+      if (!inp || !list) return;
+
+      var q = inp.value.trim().toLowerCase();
+      var options = list.querySelectorAll('.sd-option');
+      var visible = 0;
+
+      options.forEach(function (el) {
+        var match = !q || el.dataset.label.toLowerCase().includes(q);
+        el.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+
+      /* No-results message */
+      var noRes = list.querySelector('.sd-no-results');
+      if (!noRes) {
+        noRes = document.createElement('div');
+        noRes.className = 'sd-no-results';
+        noRes.textContent = 'No results found';
+        list.appendChild(noRes);
+      }
+      noRes.style.display = visible === 0 ? 'block' : 'none';
+    };
+
+    /* ── sdOnChange(id, fn) ───────────────────────────────────────
+       Registers (or clears) an onChange callback for an sd-wrap.  */
+    window.sdOnChange = function (id, fn) {
+      _sdReg[id] = _sdReg[id] || {};
+      _sdReg[id].onChange = fn || null;
+    };
+
+    /* ── Close on outside click ───────────────────────────────────*/
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.sd-wrap')) {
+        document.querySelectorAll('.sd-wrap.open').forEach(function (el) {
+          el.classList.remove('open');
+        });
+      }
+    });
+
+    /* ── Keyboard navigation ──────────────────────────────────────*/
+    document.addEventListener('keydown', function (e) {
+      var openWrap = document.querySelector('.sd-wrap.open');
+      if (!openWrap) return;
+      var id   = openWrap.id.replace('sdWrap_', '');
+      var list = document.getElementById('sdList_' + id);
+      if (!list) return;
+
+      var opts   = Array.from(list.querySelectorAll('.sd-option:not(.hidden)'));
+      var focused = list.querySelector('.sd-option.focused');
+      var idx    = opts.indexOf(focused);
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (focused) focused.classList.remove('focused');
+        var next = opts[idx + 1] || opts[0];
+        if (next) { next.classList.add('focused'); next.scrollIntoView({ block: 'nearest' }); }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (focused) focused.classList.remove('focused');
+        var prev = opts[idx - 1] || opts[opts.length - 1];
+        if (prev) { prev.classList.add('focused'); prev.scrollIntoView({ block: 'nearest' }); }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (focused) focused.click();
+      } else if (e.key === 'Escape') {
+        openWrap.classList.remove('open');
+      }
+    });
+
+  })();
+  </script>
+
+
+
+
+  <!-- ── TS12 Mobile Sidebar & SD Backdrop ───────────────────── -->
+  <script>
+  (function () {
+    var sidebar  = document.getElementById('sidebar');
+    var toggler  = document.querySelector('.navbar-toggler-right[data-bs-toggle="offcanvas"]');
+    if (!sidebar) return;
+
+    /* ── Sidebar open / close ─────────────────────────────────── */
+    function openSidebar() {
+      sidebar.classList.add('ts12-open');
+      document.body.classList.add('ts12-sidebar-open');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('ts12-open');
+      document.body.classList.remove('ts12-sidebar-open');
+    }
+    if (toggler) {
+      toggler.addEventListener('click', function (e) {
+        e.stopPropagation();
+        sidebar.classList.contains('ts12-open') ? closeSidebar() : openSidebar();
+      });
+    }
+    // Close on backdrop click
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('ts12-open') &&
+          !sidebar.contains(e.target) &&
+          (!toggler || !toggler.contains(e.target))) {
+        closeSidebar();
+      }
+    });
+    // Close on nav link click (page navigation on mobile)
+    sidebar.querySelectorAll('a.nav-link:not([data-bs-toggle])').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (window.innerWidth < 992) closeSidebar();
+      });
+    });
+    // Swipe left on sidebar to close
+    var _tx = 0;
+    sidebar.addEventListener('touchstart', function (e) { _tx = e.touches[0].clientX; }, { passive: true });
+    sidebar.addEventListener('touchend',   function (e) {
+      if (e.changedTouches[0].clientX - _tx < -48) closeSidebar();
+    }, { passive: true });
+
+    /* ── Searchable-dropdown backdrop (mobile bottom-sheet) ─────── */
+    var sdBackdrop = document.createElement('div');
+    sdBackdrop.className = 'sd-backdrop';
+    document.body.appendChild(sdBackdrop);
+    sdBackdrop.addEventListener('click', function () {
+      document.querySelectorAll('.sd-wrap.open').forEach(function (w) { w.classList.remove('open'); });
+      sdBackdrop.classList.remove('visible');
+    });
+    // Patch sdToggle to show/hide backdrop on mobile
+    var _origToggle = window.sdToggle;
+    window.sdToggle = function (id) {
+      if (_origToggle) _origToggle(id);
+      if (window.innerWidth <= 767) {
+        var isOpen = document.getElementById('sdWrap_' + id) &&
+                     document.getElementById('sdWrap_' + id).classList.contains('open');
+        sdBackdrop.classList.toggle('visible', isOpen);
+      }
+    };
+  })();
+  </script>
+
+</body>
+
+</html>
